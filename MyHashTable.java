@@ -5,6 +5,10 @@
 //chain of 100 or less is ok too
 
 package lab11_scrabble;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList; 
@@ -30,25 +34,25 @@ class HashNode<K, V>
 class MyHashTable<K, V> 
 { 
     // bucketArray is used to store array of chains 
-    private LinkedList<HashNode<K, V>> bucketArray; 
+    private HashNode<K, V>[] bucketArray; 
   
     // Current capacity of array list 
-    private int numBuckets; 
+    private static int numBuckets; 
   
     // Current size of array list 
     private int size; 
   
     // Constructor (Initializes capacity, size and 
     // empty chains. 
-    public MyHashTable() 
+    public MyHashTable(int size) 
     { 
-        bucketArray = new LinkedList<>(); 
-        numBuckets = 10; 
-        size = 0; 
+        bucketArray = new HashNode[size]; 
+        numBuckets = size; 
+       
   
         // Create empty chains 
         for (int i = 0; i < numBuckets; i++) 
-            bucketArray.add(null); 
+            bucketArray[i]=null; 
     } 
   
     public int size() { return size; } 
@@ -62,7 +66,26 @@ class MyHashTable<K, V>
         int index = hashCode % numBuckets; 
         return index; 
     } 
-  
+    public int[] getSizesOfChains() {
+    	int[] sizes = new int[numBuckets];
+    	int i=0;
+    	for(HashNode<K,V> n: bucketArray) {
+    		sizes[i] = getSizeOfSingleChain(i);
+    		i++;
+    	}
+    	
+    	return sizes;
+    }
+    public int getSizeOfSingleChain(int index) {
+    	HashNode<K,V> current = bucketArray[index];
+    	int i =0;
+    	while(current!=null) {
+    		current = current.next;
+    		i++;
+    	}
+    	System.out.println(i);
+    	return i;
+    }
     // Method to remove a given key 
     public V remove(K key) 
     { 
@@ -70,7 +93,7 @@ class MyHashTable<K, V>
         int bucketIndex = getBucketIndex(key); 
   
         // Get head of chain 
-        HashNode<K, V> head = bucketArray.get(bucketIndex); 
+        HashNode<K, V> head = bucketArray[bucketIndex]; 
   
         // Search for key in its chain 
         HashNode<K, V> prev = null; 
@@ -96,7 +119,7 @@ class MyHashTable<K, V>
         if (prev != null) 
             prev.next = head.next; 
         else
-            bucketArray.set(bucketIndex, head.next); 
+            bucketArray[bucketIndex]=head.next; 
   
         return head.value; 
     } 
@@ -106,7 +129,7 @@ class MyHashTable<K, V>
     { 
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
-        HashNode<K, V> head = bucketArray.get(bucketIndex); 
+        HashNode<K, V> head = bucketArray[bucketIndex]; 
   
         // Search key in chain 
         while (head != null) 
@@ -125,7 +148,7 @@ class MyHashTable<K, V>
     { 
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
-        HashNode<K, V> head = bucketArray.get(bucketIndex); 
+        HashNode<K, V> head = bucketArray[bucketIndex]; 
   
         // Check if key is already present 
         while (head != null) 
@@ -140,48 +163,49 @@ class MyHashTable<K, V>
   
         // Insert key in chain 
         size++; 
-        head = bucketArray.get(bucketIndex); 
+        head = bucketArray[bucketIndex]; 
         HashNode<K, V> newNode = new HashNode<K, V>(key, value); 
         newNode.next = head; 
-        bucketArray.set(bucketIndex, newNode); 
+        bucketArray[bucketIndex]=newNode; 
   
         // If load factor goes beyond threshold, then 
         // double hash table size 
-        if ((1.0*size)/numBuckets >= 0.7) 
-        { 
-            ArrayList<HashNode<K, V>> temp = bucketArray; 
-            bucketArray = new ArrayList<>(); 
-            numBuckets = 2 * numBuckets; 
-            size = 0; 
-            for (int i = 0; i < numBuckets; i++) 
-                bucketArray.add(null); 
-  
-            for (HashNode<K, V> headNode : temp) 
-            { 
-                while (headNode != null) 
-                { 
-                    add(headNode.key, headNode.value); 
-                    headNode = headNode.next; 
-                } 
-            } 
-        } 
+//        if ((1.0*size)/numBuckets >= 0.7) 
+//        { 
+//            HashNode<K, V>[numBuckets] temp = bucketArray; 
+//            bucketArray = new HashNode<K, V>[numBuckets*2](); 
+//            numBuckets = 2 * numBuckets; 
+//            size = 0; 
+//            for (int i = 0; i < numBuckets; i++) 
+//                bucketArray.add(null); 
+//  
+//            for (HashNode<K, V> headNode : temp) 
+//            { 
+//                while (headNode != null) 
+//                { 
+//                    add(headNode.key, headNode.value); 
+//                    headNode = headNode.next; 
+//                } 
+//            } 
+//        } 
     } 
   
     // Driver method to test Map class 
     public static void main(String[] args) 
     { 
-        MyHashTable<String, String>map = new MyHashTable<>(); 
+        MyHashTable<String, String>map = new MyHashTable<>(numBuckets); 
         //get bca -> normalized to abc(in order), generate hash key-> put, get String[] of permutations
-        map.add("abc","abc" );
-        map.add("abc","bca" ); 
-        map.add("abc","bac" );
-        map.add("abc","cba" ); 
-        map.add("coder","coder" ); 
-        map.add("this","coder" ); 
-        System.out.println(map.size()); 
-        System.out.println(map.get("abc")); 
-        System.out.println(map.size()); 
-        System.out.println(map.isEmpty()); 
+//        map.add("abc","abc" );
+//        map.add("abc","bca" ); 
+//        map.add("abc","bac" );
+//        map.add("abc","cba" ); 
+//        map.add("coder","coder" ); 
+//        map.add("this","coder" ); 
+//        System.out.println(map.size()); 
+//        System.out.println(map.get("abc")); 
+//        System.out.println(map.size()); 
+//        System.out.println(map.isEmpty()); 
+        map.readAndAdd("src/lab11_scrabble/wordsList.txt");
     } 
     public boolean isPrime(int n) {
     	return true;
@@ -221,4 +245,30 @@ class MyHashTable<K, V>
     	int numOfBuckets = 139;
     	return key%numOfBuckets;
     }
+    
+    public void readAndAdd(String fileLocation)  
+	{  
+		try{  
+			File file=new File(fileLocation);    //creates a new file instance  
+//			FileReader fr=new FileReader(file);   //reads the file  
+//			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
+//			for(String line="";(line=br.readLine())!=null;){  
+//				System.out.println(line); 
+//				String[] words = line.split(",");
+//				for(String word:words) {
+//					System.out.println(word);
+//					
+//				}
+//			}  
+			FileReader fr=new FileReader(file);   //reads the file  
+			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
+			for(String line="";(line=br.readLine())!=null;){  
+				System.out.println(line);    
+			}  
+			fr.close();    //closes the stream and release the resources  
+		}catch(IOException e){  
+			e.printStackTrace();  
+		}  
+		
+	}  
 } 
