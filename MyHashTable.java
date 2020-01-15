@@ -11,22 +11,24 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList; 
+import java.util.LinkedList;
+import java.util.Set; 
   
 // A node of chains 
 class HashNode<K, V> 
 { 
-    K key; 
-    V value; 
+   int key; 
+    String value; 
+   
   
     // Reference to next node 
     HashNode<K, V> next; 
   
     // Constructor 
-    public HashNode(K key, V value) 
+    public HashNode(int hashedKey, String keyStr) 
     { 
-        this.key = key; 
-        this.value = value; 
+        this.key = hashedKey; 
+        this.value = keyStr; 
     } 
 } 
   
@@ -41,6 +43,8 @@ class MyHashTable<K, V>
   
     // Current size of array list 
     private int size; 
+    
+    private  boolean moreThan16=false;
   
     // Constructor (Initializes capacity, size and 
     // empty chains. 
@@ -60,9 +64,9 @@ class MyHashTable<K, V>
   
     // This implements hash function to find index 
     // for a key 
-    private int getBucketIndex(K key) 
+    private int getBucketIndex(String keyStr) 
     { 
-        int hashCode = key.hashCode(); 
+        int hashCode = hashKey(normalize(keyStr)); 
         int index = hashCode % numBuckets; 
         return index; 
     } 
@@ -73,7 +77,7 @@ class MyHashTable<K, V>
     		sizes[i] = getSizeOfSingleChain(i);
     		i++;
     	}
-    	
+    	System.out.println(i);
     	return sizes;
     }
     public int getSizeOfSingleChain(int index) {
@@ -83,11 +87,12 @@ class MyHashTable<K, V>
     		current = current.next;
     		i++;
     	}
-    	System.out.println(i);
+    	System.out.println(index+": "+i);
+    	if(i>16) moreThan16=true;
     	return i;
     }
     // Method to remove a given key 
-    public V remove(K key) 
+    public String remove(String key) 
     { 
         // Apply hash function to find index for given key 
         int bucketIndex = getBucketIndex(key); 
@@ -100,7 +105,7 @@ class MyHashTable<K, V>
         while (head != null) 
         { 
             // If Key found 
-            if (head.key.equals(key)) 
+            if (head.value.equals(key)) 
                 break; 
   
             // Else keep moving in chain 
@@ -125,8 +130,9 @@ class MyHashTable<K, V>
     } 
   
     // Returns value for a key 
-    public V get(K key) 
+    public String get(String key) 
     { 
+    	
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
         HashNode<K, V> head = bucketArray[bucketIndex]; 
@@ -134,7 +140,7 @@ class MyHashTable<K, V>
         // Search key in chain 
         while (head != null) 
         { 
-            if (head.key.equals(key)) 
+            if (head.value.equals(key)) 
                 return head.value; 
             head = head.next; 
         } 
@@ -144,69 +150,126 @@ class MyHashTable<K, V>
     } 
   
     // Adds a key value pair to hash 
-    public void add(K key, V value) 
+    public void add(int hashedKey, String keyStr) 
     { 
         // Find head of chain for given key 
-        int bucketIndex = getBucketIndex(key); 
+    	keyStr=keyStr.toLowerCase();
+       int bucketIndex = getBucketIndex(keyStr); 
         HashNode<K, V> head = bucketArray[bucketIndex]; 
-  
+      
         // Check if key is already present 
         while (head != null) 
         { 
-            if (head.key.equals(key)) 
+            if (head.value.equals(keyStr)) 
             { 
-                head.value = value; 
+                //already exists
                 return; 
             } 
             head = head.next; 
         } 
-  
+//  
         // Insert key in chain 
         size++; 
         head = bucketArray[bucketIndex]; 
-        HashNode<K, V> newNode = new HashNode<K, V>(key, value); 
+        HashNode<K, V> newNode = new HashNode<K, V>(hashedKey, keyStr); 
         newNode.next = head; 
         bucketArray[bucketIndex]=newNode; 
-  
-        // If load factor goes beyond threshold, then 
-        // double hash table size 
-//        if ((1.0*size)/numBuckets >= 0.7) 
-//        { 
-//            HashNode<K, V>[numBuckets] temp = bucketArray; 
-//            bucketArray = new HashNode<K, V>[numBuckets*2](); 
-//            numBuckets = 2 * numBuckets; 
-//            size = 0; 
-//            for (int i = 0; i < numBuckets; i++) 
-//                bucketArray.add(null); 
-//  
-//            for (HashNode<K, V> headNode : temp) 
-//            { 
-//                while (headNode != null) 
-//                { 
-//                    add(headNode.key, headNode.value); 
-//                    headNode = headNode.next; 
-//                } 
-//            } 
-//        } 
     } 
   
     // Driver method to test Map class 
     public static void main(String[] args) 
     { 
-        MyHashTable<String, String>map = new MyHashTable<>(numBuckets); 
-        //get bca -> normalized to abc(in order), generate hash key-> put, get String[] of permutations
-//        map.add("abc","abc" );
-//        map.add("abc","bca" ); 
-//        map.add("abc","bac" );
-//        map.add("abc","cba" ); 
-//        map.add("coder","coder" ); 
-//        map.add("this","coder" ); 
-//        System.out.println(map.size()); 
-//        System.out.println(map.get("abc")); 
-//        System.out.println(map.size()); 
-//        System.out.println(map.isEmpty()); 
+    	
+        MyHashTable<String, String> map = new MyHashTable<>(180); 
+
+      
         map.readAndAdd("src/lab11_scrabble/wordsList.txt");
+
+        System.out.println(map.size()); 
+        System.out.println(map.get("whoever")); 
+        System.out.println(map.remove("wrestle")); 
+        System.out.println(map.size()); 
+
+        System.out.println(map.get("whoev"));
+        System.out.println(map.remove("iever"));
+        System.out.println(map.size()); 
+        System.out.println(map.isEmpty()); 
+        
+        map.getSizesOfChains();
+        System.out.println(map.moreThan16); 
+//        System.out.println("key".substring(1));
+//        String s= "key";
+//
+//        System.out.println("k ey  ".strip());
+          map.findPermutation("Keynote");
+        //  System.out.println("key".substring(0,1));
     } 
+    
+    public LinkedList<String> getPermutation(String s) {
+    	s="ke";
+    	LinkedList<LinkedList<String>> list = new  LinkedList<LinkedList<String>>();
+    	int size = s.length();
+//    	char[] chars = s.toCharArray();
+    	list = recur(size, s,list);
+    	
+    	System.out.println("list.size:"+list.getLast().size());
+    	LinkedList<String> result =new LinkedList<String>();
+    	return result;
+    }
+    public LinkedList<LinkedList<String>> recur(int size, String s,LinkedList<LinkedList<String>> list) {
+    	System.out.println("size:"+size+"; "+s.length());
+    	
+    	if(s.length()!=0) {
+    		if(list.size()==0) list.add(new LinkedList<String>());
+    	
+	    	for(int i=0;i<2;i++) {
+	    		if(i==0) { //only add the char when i==1	    			
+	    		//	list.getLast().add(s.substring(0,1));
+	    			if(s.length()>1) {
+	    				recur(size, s.substring(1),list);
+	    			}
+//	    			else if (s.length()==1)
+//	    				recur(size, s.substring(0),list);
+	    		}
+	    		else if(i==1) { //only add the char when i==1	    			
+	    			list.getLast().add(s.substring(0,1));
+	    			if(s.length()>1)
+		    			recur(size, s.substring(1),list);
+//	    			else if(s.length()==1)
+//	    				recur(size, s.substring(0),list);
+	    		}
+	    		
+	    	}
+    	}
+    	if(s.length()==1) {
+    		list.add(new LinkedList<String>());
+    	}
+    	return list;
+    }
+    public void findPermutation(String s){
+    	//Set<String> permutations = new Set<String>();
+    	String s_norm= normalize(s);
+    	int k = hashKey(s_norm);
+    	
+    	//permutation
+    	LinkedList<String> perms = getPermutation(s);
+    	
+    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	while(head!=null) {
+    		//System.out.println("head.value:"+head.value);
+    		if(isPermutation(s,head.value)) System.out.println("perm:"+head.value);
+    		
+    		head = head.next;
+    	}
+    	head = bucketArray[getBucketIndex("key")];
+    	while(head!=null) {
+    		//System.out.println("head.value:"+head.value);
+    		if(isPermutation("key",head.value)) System.out.println("perm:"+head.value);
+    		//System.out.println(get("key"));
+    		head = head.next;
+    	}
+//    	return permutations;
+    }
     public boolean isPrime(int n) {
     	return true;
     }
@@ -224,11 +287,11 @@ class MyHashTable<K, V>
     	if(size2==size1) return s1Norm.equals(s2Norm);
     	
     	//if s2 has less letters, check using contains
-    	for(int i=size2-1;i>=0;i--) {
-    		
-    	}
+//    	for(int i=size2-1;i>=0;i--) {
+//    		
+//    	}
     	
-    	return true;
+    	return false;
     }
     public String normalize(String s) {
     	s=s.toLowerCase();
@@ -238,14 +301,17 @@ class MyHashTable<K, V>
     }
     public int hashKey(String keyStr) {
     	int key=0;
-    	int prime1=31;
+    	int prime1=43;
     	for(int i=0;i<keyStr.length();i++) {
-    		key += ((int)keyStr.charAt(i))*i%prime1;
+    		key += (int)(keyStr.charAt(i))*prime1*i;
     	}
-    	int numOfBuckets = 139;
-    	return key%numOfBuckets;
+    	//int numOfBuckets = 139;
+    	
+    	return key;
     }
-    
+    public int keyToIndex(int key) {
+    	return key%numBuckets;
+    }
     public void readAndAdd(String fileLocation)  
 	{  
 		try{  
@@ -263,7 +329,11 @@ class MyHashTable<K, V>
 			FileReader fr=new FileReader(file);   //reads the file  
 			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
 			for(String line="";(line=br.readLine())!=null;){  
-				System.out.println(line);    
+				String line_norm = normalize(line);
+				int k = hashKey(normalize(line_norm));
+				add(k,line);	
+				System.out.println(line+": "+line_norm+": "+k);  //strip of space!!
+			
 			}  
 			fr.close();    //closes the stream and release the resources  
 		}catch(IOException e){  
