@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set; 
   
@@ -60,7 +61,7 @@ class MyHashTable<K, V>
     } 
   
     public static void main(String[] args) 
-    { 
+    { //mmm
     	
         MyHashTable<String, String> map = new MyHashTable<>(20047); 
 
@@ -84,12 +85,13 @@ class MyHashTable<K, V>
         
        map.getSizesOfChains();
         System.out.println("moreThan16:"+map.moreThan16); 
-//        System.out.println("key".substring(1));
-//        String s= "key";
-//
-//        System.out.println("k ey  ".strip());
-          map.findPermutation("Keynote");
-        //  System.out.println("key".substring(0,1));
+
+          map.findPermutation("dog");
+      //    System.out.println( map.get("od"));
+//          System.out.println( map.isPermutation("keynote","on"));
+//          System.out.println( map.isPermutation("keynote","no"));
+//          System.out.println( map.isPermutation("keynote","ton"));
+
     } 
     
     public int size() { return size; } 
@@ -211,93 +213,131 @@ class MyHashTable<K, V>
   
     // Driver method to test Map class 
    
-    public LinkedList<String> getPermutation(String s) {
-    	s="ke";
-    	LinkedList<LinkedList<String>> list = new  LinkedList<LinkedList<String>>();
+    public LinkedList<String> getPermutation(String s) {///gggp
+
+   	LinkedList<String> list = new  LinkedList<String>();
+   		s="01234";
     	int size = s.length();
-//    	char[] chars = s.toCharArray();
-    	list = recur(size, s,list);
+    	list = recur(size, s,list); 
     	
-    	System.out.println("list.size:"+list.getLast().size());
-    	LinkedList<String> result =new LinkedList<String>();
-    	return result;
-    }
-    public LinkedList<LinkedList<String>> recur(int size, String s,LinkedList<LinkedList<String>> list) {
-    	System.out.println("size:"+size+"; "+s.length());
-    	
-    	if(s.length()!=0) {
-    		if(list.size()==0) list.add(new LinkedList<String>());
-    	
-	    	for(int i=0;i<2;i++) {
-	    		if(i==0) { //only add the char when i==1	    			
-	    		//	list.getLast().add(s.substring(0,1));
-	    			if(s.length()>1) {
-	    				recur(size, s.substring(1),list);
-	    			}
-//	    			else if (s.length()==1)
-//	    				recur(size, s.substring(0),list);
-	    		}
-	    		else if(i==1) { //only add the char when i==1	    			
-	    			list.getLast().add(s.substring(0,1));
-	    			if(s.length()>1)
-		    			recur(size, s.substring(1),list);
-//	    			else if(s.length()==1)
-//	    				recur(size, s.substring(0),list);
-	    		}
-	    		
-	    	}
-    	}
-    	if(s.length()==1) {
-    		list.add(new LinkedList<String>());
-    	}
     	return list;
     }
-    public void findPermutation(String s){
+    public LinkedList<String> recur(int size, String s,LinkedList<String> list) {
+    	
+    	//0 1, 01
+    	//0 1 2, 01 02 12, 012
+    	for(int i=size; i>0;i--) {
+    		System.out.println("size:"+size+"; "+s.length());
+	    	if(s.length()==size && list.size()<1) {
+	    		list.add(s);
+	    	}
+	    	else if(i==1) {
+	    		for(int j=0;j<s.length();j++) {
+		    		list.add(s.substring(j,j+1));
+	    		}
+	    	}else if(i==2){//0123 01 02 03 , 12 13, 23, 4!/2!2!=6
+	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+	    			for(int p=j+1;p<s.length();p++) {
+	    			//	System.out.println("j/p"+j+"/"+p);
+	    				list.add(""+s.charAt(j)+s.charAt(p));
+	    			}
+	    		}
+	    	}
+	    	else if(i==3){//0123 , 012 013 023 , 123  4!/3!1!=4
+	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+	    			for(int p=j+1;p<s.length()-(i-2);p++) {
+	    				for(int y=p+1;y<s.length()-(i-3);y++) {
+	    			//	System.out.println("j/p"+j+"/"+p);
+	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y));
+	    				}
+	    			}
+	    		}
+	    	}else if(i==4){//0123 , 012 013 023 , 123  4!/3!1!=4
+	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+	    			for(int p=j+1;p<s.length()-(i-2);p++) {
+	    				for(int y=p+1;y<s.length()-(i-3);y++) {
+	    					for(int z=y+1;z<s.length()-(i-4);z++) {
+	    			//	System.out.println("j/p"+j+"/"+p);
+	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y)+s.charAt(z));
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
+	    	
+    	}
+    	
+    	return list;
+    }
+    public void findPermutation(String str){//fff
     	//Set<String> permutations = new Set<String>();
-    	String s_norm= normalize(s);
+    	String s_norm= normalize(str);
     	int k = hashKey(s_norm);
     	
     	//permutation
-    	LinkedList<String> perms = getPermutation(s);
+    	str="dog";
     	
-    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
-    	while(head!=null) {
-    		//System.out.println("head.value:"+head.value);
-    		if(isPermutation(s,head.value)) System.out.println("perm:"+head.value);
-    		
-    		head = head.next;
-    	}
-    	head = bucketArray[getBucketIndex("key")];
-    	while(head!=null) {
-    		//System.out.println("head.value:"+head.value);
-    		if(isPermutation("key",head.value)) System.out.println("perm:"+head.value);
-    		//System.out.println(get("key"));
-    		head = head.next;
-    	}
+    	LinkedList<String> list = getPermutation(str);
+    	System.out.println(str+"'s list.size:"+list.size());
+    	HashNode<K,V> head;
+    	LinkedList<String> permList = new LinkedList<String>();
+    	HashSet<String> permSet = new HashSet<String>();
+    	 
+        
+    
+       
+		for(String s: list) {
+			System.out.println(".."+s);
+	    	head = bucketArray[getBucketIndex(s)];
+	    	while(head!=null) {
+	    		//System.out.println("head.value:"+head.value);
+	    		if(normalize(s).equals(normalize(head.value))) permList.add(head.value);
+	    		
+	    		head = head.next;
+	    	}
+		}
+    	
+		 Iterator<String> it = hset.iterator();
+	        while(it.hasNext()){
+	           System.out.println("__"+it.next());
+	        }
+		for(String s: permList) {
+			System.out.println("__"+s);
+		}
 //    	return permutations;
     }
     public boolean isPrime(int n) {
     	return true;
     }
     //if s2 is a permutation of s1
-    public boolean isPermutation(String s1,String s2) {
+    public boolean isPermutation(String s1,String s2) {//ppp
     	int size1=s1.length();
     	int size2=s2.length();
     	
     	//if more letters, return false
-    	if(size2>size1)return false;
+    	if(size2>size1) return false;
     	
     	String s1Norm=normalize(s1);
     	String s2Norm=normalize(s2);
+    	
     	//if same amount of letters, check normalize
     	if(size2==size1) return s1Norm.equals(s2Norm);
     	
     	//if s2 has less letters, check using contains
-//    	for(int i=size2-1;i>=0;i--) {
-//    		
-//    	}
+    	for(int i=0;i<s2.length();i++) {//watch out for how many char eg. keynote nono or none
+    		if(s1Norm.contains(s2Norm.substring(i,i+1))) {
+    			int index = s1Norm.indexOf(s2Norm.substring(i,i+1));
+    			if(index==0)
+    				s1Norm = s1Norm.substring(1);
+    			else if(index>0 && index<s1Norm.length()-1)
+    				s1Norm = s1Norm.substring(0,index)+s1Norm.substring(index+1);
+    			else if(index==s1Norm.length()-1)
+    				s1Norm = s1Norm.substring(0,index);
+    			
+    		}else return false;
+    	}
     	
-    	return false;
+    	return true;
     }
     public String normalize(String s) {
     	s=s.toLowerCase();
