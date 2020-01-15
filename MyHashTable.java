@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set; 
+import java.util.Set;
+
+import javax.swing.text.html.HTMLDocument.Iterator; 
   
 // A node of chains 
 class HashNode<K, V> 
@@ -65,16 +67,15 @@ class MyHashTable<K, V>
     	
         MyHashTable<String, String> map = new MyHashTable<>(20047); 
 
-      
         map.readAndAdd("src/lab11_scrabble/wordsList.txt");
 
-        System.out.println(map.size()); 
-        String ss ="note";
-        System.out.println("get "+ss+": "+map.get(ss)); 
-        ss ="no";
-        System.out.println("get "+ss+": "+map.get(ss)); 
-        ss ="on";
-        System.out.println("get "+ss+": "+map.get(ss)); 
+//        System.out.println(map.size()); 
+//        String ss ="note";
+//        System.out.println("get "+ss+": "+map.get(ss)); 
+//        ss ="no";
+//        System.out.println("get "+ss+": "+map.get(ss)); 
+//        ss ="on";
+//        System.out.println("get "+ss+": "+map.get(ss)); 
      //   System.out.println("remove "+ss+": "+map.remove(ss)); 
      //   System.out.println(map.size()); 
 //
@@ -83,15 +84,17 @@ class MyHashTable<K, V>
 //        System.out.println(map.size()); 
 //        System.out.println(map.isEmpty()); 
         
-       map.getSizesOfChains();
-        System.out.println("moreThan16:"+map.moreThan16); 
-
-          map.findPermutation("dog");
+//       map.getSizesOfChains();
+//        System.out.println("moreThan16:"+map.moreThan16); 
+//
+          
+        map.findPermutation("silent");
+        map.findSubset("silent");
       //    System.out.println( map.get("od"));
 //          System.out.println( map.isPermutation("keynote","on"));
 //          System.out.println( map.isPermutation("keynote","no"));
 //          System.out.println( map.isPermutation("keynote","ton"));
-
+          map.getWordsFromSameBucket("dog");
     } 
     
     public int size() { return size; } 
@@ -227,49 +230,79 @@ class MyHashTable<K, V>
     	//0 1, 01
     	//0 1 2, 01 02 12, 012
     	for(int i=size; i>0;i--) {
-    		System.out.println("size:"+size+"; "+s.length());
-	    	if(s.length()==size && list.size()<1) {
-	    		list.add(s);
-	    	}
-	    	else if(i==1) {
-	    		for(int j=0;j<s.length();j++) {
-		    		list.add(s.substring(j,j+1));
-	    		}
-	    	}else if(i==2){//0123 01 02 03 , 12 13, 23, 4!/2!2!=6
-	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-	    			for(int p=j+1;p<s.length();p++) {
-	    			//	System.out.println("j/p"+j+"/"+p);
-	    				list.add(""+s.charAt(j)+s.charAt(p));
-	    			}
-	    		}
-	    	}
-	    	else if(i==3){//0123 , 012 013 023 , 123  4!/3!1!=4
-	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-	    			for(int p=j+1;p<s.length()-(i-2);p++) {
-	    				for(int y=p+1;y<s.length()-(i-3);y++) {
-	    			//	System.out.println("j/p"+j+"/"+p);
-	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y));
-	    				}
-	    			}
-	    		}
-	    	}else if(i==4){//0123 , 012 013 023 , 123  4!/3!1!=4
-	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-	    			for(int p=j+1;p<s.length()-(i-2);p++) {
-	    				for(int y=p+1;y<s.length()-(i-3);y++) {
-	    					for(int z=y+1;z<s.length()-(i-4);z++) {
-	    			//	System.out.println("j/p"+j+"/"+p);
-	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y)+s.charAt(z));
-	    					}
-	    				}
-	    			}
-	    		}
+//    		System.out.println("size:"+size+"; "+s.length());
+//    		
+//    		j=1 
+//    	    		prev=0,
+//    	    		for(int k=prev;k<s.length()-(i-j);k++) {
+//    	    			re(k+1,i,s); if(j==i) return 
+//    	    		}
+    		
+//	    	if(s.length()==size && list.size()<1) {
+//	    		list.add(s);
+//	    	}
+//	    	else if(i==1) {
+//	    		for(int j=0;j<s.length();j++) {
+//		    		list.add(s.substring(j,j+1));
+//	    		}
+//	    	}else if(i==2){//0123 01 02 03 , 12 13, 23, 4!/2!2!=6
+//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+//	    			for(int p=j+1;p<s.length();p++) {
+//	    			//	System.out.println("j/p"+j+"/"+p);
+//	    				list.add(""+s.charAt(j)+s.charAt(p));
+//	    			}
+//	    		}
+//	    	}
+//	    	else if(i==3){//0123 , 012 013 023 , 123  4!/3!1!=4
+//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+//	    			for(int p=j+1;p<s.length()-(i-2);p++) {
+//	    				for(int y=p+1;y<s.length()-(i-3);y++) {
+//	    			//	System.out.println("j/p"+j+"/"+p);
+//	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y));
+//	    				}
+//	    			}
+//	    		}
+//	    		
+//	    	}else if(i==4){//0123 , 012 013 023 , 123  4!/3!1!=4
+//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
+//	    			for(int p=j+1;p<s.length()-(i-2);p++) {
+//	    				for(int y=p+1;y<s.length()-(i-3);y++) {
+//	    					for(int z=y+1;z<s.length()-(i-4);z++) {
+//	    			//	System.out.println("j/p"+j+"/"+p);
+//	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y)+s.charAt(z));
+//	    					}
+//	    				}
+//	    			}
+//	    		}
+//	    		
+    	
+	    			
 	    	}
 	    	
-    	}
+    	
     	
     	return list;
     }
-    public void findPermutation(String str){//fff
+    public LinkedList<String> findPermutation(String s){
+    	LinkedList<String> list = new LinkedList<String>();
+    		
+    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	while(head!=null) {
+    		//System.out.println("head.value:"+head.value);
+    		if(normalize(s).equals(normalize(head.value))) {
+    			list.add(head.value);
+    		}
+    		
+    		head = head.next;
+    	}
+    	System.out.println("anagrams for "+s+" :");
+    	for(String ss:list) {
+    		System.out.print(ss+"  ");
+    	}
+    	System.out.println("\n*************************");
+    	return list;
+    }
+    public void findSubset(String str){//fff
     	//Set<String> permutations = new Set<String>();
     	String s_norm= normalize(str);
     	int k = hashKey(s_norm);
@@ -280,7 +313,7 @@ class MyHashTable<K, V>
     	LinkedList<String> list = getPermutation(str);
     	System.out.println(str+"'s list.size:"+list.size());
     	HashNode<K,V> head;
-    	LinkedList<String> permList = new LinkedList<String>();
+    	
     	HashSet<String> permSet = new HashSet<String>();
     	 
         
@@ -291,53 +324,63 @@ class MyHashTable<K, V>
 	    	head = bucketArray[getBucketIndex(s)];
 	    	while(head!=null) {
 	    		//System.out.println("head.value:"+head.value);
-	    		if(normalize(s).equals(normalize(head.value))) permList.add(head.value);
+	    		if(normalize(s).equals(normalize(head.value))) permSet.add(head.value);
 	    		
 	    		head = head.next;
 	    	}
 		}
     	
-		 Iterator<String> it = hset.iterator();
-	        while(it.hasNext()){
-	           System.out.println("__"+it.next());
+		 for(String s: permSet){
+	           System.out.println("__"+s);
 	        }
-		for(String s: permList) {
-			System.out.println("__"+s);
-		}
+		
 //    	return permutations;
     }
     public boolean isPrime(int n) {
     	return true;
     }
     //if s2 is a permutation of s1
-    public boolean isPermutation(String s1,String s2) {//ppp
-    	int size1=s1.length();
-    	int size2=s2.length();
+//    public boolean isSubset(String s1,String s2) {//ppp
+//    	int size1=s1.length();
+//    	int size2=s2.length();
+//    	
+//    	//if more letters, return false
+//    	if(size2>size1) return false;
+//    	
+//    	String s1Norm=normalize(s1);
+//    	String s2Norm=normalize(s2);
+//    	
+//    	//if same amount of letters, check normalize
+//    	if(size2==size1) return s1Norm.equals(s2Norm);
+//    	
+//    	//if s2 has less letters, check using contains
+//    	for(int i=0;i<s2.length();i++) {//watch out for how many char eg. keynote nono or none
+//    		if(s1Norm.contains(s2Norm.substring(i,i+1))) {
+//    			int index = s1Norm.indexOf(s2Norm.substring(i,i+1));
+//    			if(index==0)
+//    				s1Norm = s1Norm.substring(1);
+//    			else if(index>0 && index<s1Norm.length()-1)
+//    				s1Norm = s1Norm.substring(0,index)+s1Norm.substring(index+1);
+//    			else if(index==s1Norm.length()-1)
+//    				s1Norm = s1Norm.substring(0,index);
+//    			
+//    		}else return false;
+//    	}
+//    	
+//    	return true;
+//    }
+    public LinkedList<String> getWordsFromSameBucket(String s) {
+    //	s="key";
+//    	
+    	LinkedList<String> list = new LinkedList<String>();
     	
-    	//if more letters, return false
-    	if(size2>size1) return false;
-    	
-    	String s1Norm=normalize(s1);
-    	String s2Norm=normalize(s2);
-    	
-    	//if same amount of letters, check normalize
-    	if(size2==size1) return s1Norm.equals(s2Norm);
-    	
-    	//if s2 has less letters, check using contains
-    	for(int i=0;i<s2.length();i++) {//watch out for how many char eg. keynote nono or none
-    		if(s1Norm.contains(s2Norm.substring(i,i+1))) {
-    			int index = s1Norm.indexOf(s2Norm.substring(i,i+1));
-    			if(index==0)
-    				s1Norm = s1Norm.substring(1);
-    			else if(index>0 && index<s1Norm.length()-1)
-    				s1Norm = s1Norm.substring(0,index)+s1Norm.substring(index+1);
-    			else if(index==s1Norm.length()-1)
-    				s1Norm = s1Norm.substring(0,index);
-    			
-    		}else return false;
+    	HashNode<K,V> head = 	bucketArray[getBucketIndex(s)];
+    	while(head!=null) {
+    		System.out.print(head.value+"  ");
+    		head=head.next;
     	}
+    	return list;
     	
-    	return true;
     }
     public String normalize(String s) {
     	s=s.toLowerCase();
