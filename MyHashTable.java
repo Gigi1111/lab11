@@ -44,7 +44,7 @@ class MyHashTable<K, V>
     // Current size of array list 
     private int size; 
     
-    private  boolean moreThan16=false;
+    private  int moreThan16=0;
   
     // Constructor (Initializes capacity, size and 
     // empty chains. 
@@ -59,6 +59,39 @@ class MyHashTable<K, V>
             bucketArray[i]=null; 
     } 
   
+    public static void main(String[] args) 
+    { 
+    	
+        MyHashTable<String, String> map = new MyHashTable<>(20047); 
+
+      
+        map.readAndAdd("src/lab11_scrabble/wordsList.txt");
+
+        System.out.println(map.size()); 
+        String ss ="note";
+        System.out.println("get "+ss+": "+map.get(ss)); 
+        ss ="no";
+        System.out.println("get "+ss+": "+map.get(ss)); 
+        ss ="on";
+        System.out.println("get "+ss+": "+map.get(ss)); 
+     //   System.out.println("remove "+ss+": "+map.remove(ss)); 
+     //   System.out.println(map.size()); 
+//
+//        System.out.println(map.get("whoev"));
+//        System.out.println(map.remove("iever"));
+//        System.out.println(map.size()); 
+//        System.out.println(map.isEmpty()); 
+        
+       map.getSizesOfChains();
+        System.out.println("moreThan16:"+map.moreThan16); 
+//        System.out.println("key".substring(1));
+//        String s= "key";
+//
+//        System.out.println("k ey  ".strip());
+          map.findPermutation("Keynote");
+        //  System.out.println("key".substring(0,1));
+    } 
+    
     public int size() { return size; } 
     public boolean isEmpty() { return size() == 0; } 
   
@@ -77,7 +110,7 @@ class MyHashTable<K, V>
     		sizes[i] = getSizeOfSingleChain(i);
     		i++;
     	}
-    	System.out.println(i);
+    	//System.out.println(i);
     	return sizes;
     }
     public int getSizeOfSingleChain(int index) {
@@ -87,8 +120,8 @@ class MyHashTable<K, V>
     		current = current.next;
     		i++;
     	}
-    	System.out.println(index+": "+i);
-    	if(i>16) moreThan16=true;
+    	//System.out.println(index+": "+i);
+    	if(i>16) moreThan16++;
     	return i;
     }
     // Method to remove a given key 
@@ -177,34 +210,7 @@ class MyHashTable<K, V>
     } 
   
     // Driver method to test Map class 
-    public static void main(String[] args) 
-    { 
-    	
-        MyHashTable<String, String> map = new MyHashTable<>(180); 
-
-      
-        map.readAndAdd("src/lab11_scrabble/wordsList.txt");
-
-        System.out.println(map.size()); 
-        System.out.println(map.get("whoever")); 
-        System.out.println(map.remove("wrestle")); 
-        System.out.println(map.size()); 
-
-        System.out.println(map.get("whoev"));
-        System.out.println(map.remove("iever"));
-        System.out.println(map.size()); 
-        System.out.println(map.isEmpty()); 
-        
-        map.getSizesOfChains();
-        System.out.println(map.moreThan16); 
-//        System.out.println("key".substring(1));
-//        String s= "key";
-//
-//        System.out.println("k ey  ".strip());
-          map.findPermutation("Keynote");
-        //  System.out.println("key".substring(0,1));
-    } 
-    
+   
     public LinkedList<String> getPermutation(String s) {
     	s="ke";
     	LinkedList<LinkedList<String>> list = new  LinkedList<LinkedList<String>>();
@@ -301,7 +307,7 @@ class MyHashTable<K, V>
     }
     public int hashKey(String keyStr) {
     	int key=0;
-    	int prime1=43;
+    	int prime1=53;
     	for(int i=0;i<keyStr.length();i++) {
     		key += (int)(keyStr.charAt(i))*prime1*i;
     	}
@@ -329,10 +335,11 @@ class MyHashTable<K, V>
 			FileReader fr=new FileReader(file);   //reads the file  
 			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
 			for(String line="";(line=br.readLine())!=null;){  
+				line =  line.replaceAll("\\s","");
 				String line_norm = normalize(line);
 				int k = hashKey(normalize(line_norm));
 				add(k,line);	
-				System.out.println(line+": "+line_norm+": "+k);  //strip of space!!
+			//	System.out.println(line+": "+line_norm+": "+k);  //strip of space!!
 			
 			}  
 			fr.close();    //closes the stream and release the resources  
