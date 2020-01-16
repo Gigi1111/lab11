@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.text.html.HTMLDocument.Iterator; 
   
@@ -69,32 +70,29 @@ class MyHashTable<K, V>
 
         map.readAndAdd("src/lab11_scrabble/wordsList.txt");
 
-//        System.out.println(map.size()); 
-//        String ss ="note";
-//        System.out.println("get "+ss+": "+map.get(ss)); 
-//        ss ="no";
-//        System.out.println("get "+ss+": "+map.get(ss)); 
-//        ss ="on";
-//        System.out.println("get "+ss+": "+map.get(ss)); 
-     //   System.out.println("remove "+ss+": "+map.remove(ss)); 
-     //   System.out.println(map.size()); 
-//
-//        System.out.println(map.get("whoev"));
-//        System.out.println(map.remove("iever"));
-//        System.out.println(map.size()); 
-//        System.out.println(map.isEmpty()); 
+        System.out.println(map.size()); 
+        System.out.println(map.isEmpty()); 
         
-//       map.getSizesOfChains();
-//        System.out.println("moreThan16:"+map.moreThan16); 
+       map.getSizesOfChains();
+        System.out.println("moreThan16:"+map.moreThan16); 
 //
           
-        map.findPermutation("silent");
-        map.findSubset("silent");
-      //    System.out.println( map.get("od"));
-//          System.out.println( map.isPermutation("keynote","on"));
-//          System.out.println( map.isPermutation("keynote","no"));
-//          System.out.println( map.isPermutation("keynote","ton"));
-          map.getWordsFromSameBucket("dog");
+//        map.findPermutation("married");
+//        map.findPermutation("rabbies");
+//        map.findPermutation("Parsley");
+       int scrabble_num=7;
+      
+       char[] arr =new char[scrabble_num]; 
+        for(int i=0;i<scrabble_num;i++) {
+        	int rnd = (int) (Math.random() * 26);
+            char base = 'a';            
+        	arr[i]=(char) (base + rnd % 26);
+        }
+        String rand=new String(arr);
+        System.out.println(rand+" can create:");
+        map.findSubset(rand);
+      //  System.out.println( map.get("ute"));
+         // map.getWordsFromSameBucket("dog");
     } 
     
     public int size() { return size; } 
@@ -178,7 +176,7 @@ class MyHashTable<K, V>
         // Search key in chain 
         while (head != null) 
         { 
-            if (head.value.equals(key)) 
+            if (normalize(head.value).equals(normalize(key))) 
                 return head.value; 
             head = head.next; 
         } 
@@ -191,7 +189,7 @@ class MyHashTable<K, V>
     public void add(int hashedKey, String keyStr) 
     { 
         // Find head of chain for given key 
-    	keyStr=keyStr.toLowerCase();
+    	
        int bucketIndex = getBucketIndex(keyStr); 
         HashNode<K, V> head = bucketArray[bucketIndex]; 
       
@@ -216,79 +214,114 @@ class MyHashTable<K, V>
   
     // Driver method to test Map class 
    
-    public LinkedList<String> getPermutation(String s) {///gggp
-
-   	LinkedList<String> list = new  LinkedList<String>();
-   		s="01234";
+    public LinkedList<String> getSubset(String s) {///gggp
+    	LinkedList<LinkedList<String>> list = new LinkedList<LinkedList<String>>();
+   	LinkedList<String> list_formatted = new  LinkedList<String>();
+   		//s="0123456";
     	int size = s.length();
-    	list = recur(size, s,list); 
-    	
-    	return list;
+    
+    	 list.add(new LinkedList<String>());
+    	agreg=0;
+    	 for(int i=1; i<=s.length();i++) {
+    	//int i=5; //5!/3!2!=10 	
+    	//int i=3; //5!/3!2!=10
+    		//
+    		list =recur(0,i,1, s,list); 
+    		 list.add(new LinkedList<String>());
+    	}
+    	 int n=(int) Math.pow(2,s.length());
+    //	 System.out.println("agreg "+agreg+" is "+""+(n-1)+" :"+(agreg==n-1));
+//    	for(LinkedList<String> li: list) {
+//    		for(String ss:li)
+//    			System.out.print(ss);
+//    		System.out.println();
+//    	}
+    
+    	for(int i=0;i<list.size();i++) {
+    		//list_formatted.add(new String());
+    		String temp="";
+    		for(int j=0;j<list.get(i).size();j++) {
+    			temp +=list.get(i).get(j);
+    		}
+    		if(temp.length()>=1)
+    			list_formatted.add(temp);
+    	}
+    	return list_formatted;
     }
-    public LinkedList<String> recur(int size, String s,LinkedList<String> list) {
+    int agreg =0;
+    public LinkedList<LinkedList<String>> recur(int prev, int i,int j, String s,LinkedList<LinkedList<String>> list) {
     	
-    	//0 1, 01
-    	//0 1 2, 01 02 12, 012
-    	for(int i=size; i>0;i--) {
-//    		System.out.println("size:"+size+"; "+s.length());
-//    		
-//    		j=1 
-//    	    		prev=0,
-//    	    		for(int k=prev;k<s.length()-(i-j);k++) {
-//    	    			re(k+1,i,s); if(j==i) return 
-//    	    		}
-    		
-//	    	if(s.length()==size && list.size()<1) {
-//	    		list.add(s);
-//	    	}
-//	    	else if(i==1) {
-//	    		for(int j=0;j<s.length();j++) {
-//		    		list.add(s.substring(j,j+1));
-//	    		}
-//	    	}else if(i==2){//0123 01 02 03 , 12 13, 23, 4!/2!2!=6
-//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-//	    			for(int p=j+1;p<s.length();p++) {
-//	    			//	System.out.println("j/p"+j+"/"+p);
-//	    				list.add(""+s.charAt(j)+s.charAt(p));
-//	    			}
-//	    		}
-//	    	}
-//	    	else if(i==3){//0123 , 012 013 023 , 123  4!/3!1!=4
-//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-//	    			for(int p=j+1;p<s.length()-(i-2);p++) {
-//	    				for(int y=p+1;y<s.length()-(i-3);y++) {
-//	    			//	System.out.println("j/p"+j+"/"+p);
-//	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y));
-//	    				}
-//	    			}
-//	    		}
-//	    		
-//	    	}else if(i==4){//0123 , 012 013 023 , 123  4!/3!1!=4
-//	    		for(int j=0;j<s.length()-(i-1);j++) {//3-2=1
-//	    			for(int p=j+1;p<s.length()-(i-2);p++) {
-//	    				for(int y=p+1;y<s.length()-(i-3);y++) {
-//	    					for(int z=y+1;z<s.length()-(i-4);z++) {
-//	    			//	System.out.println("j/p"+j+"/"+p);
-//	    				list.add(""+s.charAt(j)+s.charAt(p)+s.charAt(y)+s.charAt(z));
-//	    					}
-//	    				}
-//	    			}
-//	    		}
-//	    		
-    	
-	    			
-	    	}
-	    	
-    	
-    	
-    	return list;
+    	//	System.out.println("**prev:"+prev+"; i:"+i+"; j:"+j+"; s:"+s);
+    	    		for(int k=prev;k<s.length()-(i-j);k++) {
+//    	    			System.out.println("begin");
+//    	        		System.out.println("for(int k="+prev+";k<"+s.length()+"-("+i+"-"+j+");k++) {");
+    	    			
+    	    			list.getLast().add(""+s.charAt(k));
+//    	    			for(LinkedList<String> li: list) {
+//    	    	    		for(String ss:li)
+//    	    	    			System.out.print(ss);
+//    	    	    		System.out.println();
+//    	    	    	}
+    	    			if(i-j>0)
+    	    				recur(k+1,i,j+1,s,list);
+    	    			else if(i-j==0) {
+//    	    				System.out.println("i-j==0");
+//    	    				System.out.println("for(int k="+prev+";k<"+s.length()+"-("+i+"-"+j+");k++) {");
+        	    			
+    	    				LinkedList<String> temp = list.getLast();
+    	    				list.add(new LinkedList<String>());
+    	    				 if(k+1<(s.length()-(i-j)) && temp.size()-3>=0) {
+    	    					// System.out.println("*");
+	    	    				for(int y=temp.size()-3;y<temp.size()-1;y++) {
+	    	    					list.getLast().add(temp.get(y));
+	    	    				}
+    	    				 }
+    	    			}
+    	    		
+    	    			//System.out.println("--");	
+    	    		}
+    	    		//System.out.println("-----");	
+    	   
+    	    if(prev==0 && j==1 && i>1) {
+    	    	for(int t=0;t<list.size();t++) {
+    	    		if(list.get(t).size()==0) {
+    	    			//System.out.println("--removeempty---");
+    	    			list.remove(t);
+    	    			t--;
+    	    		}
+    	    	}
+    	    	
+//    	    	System.out.println("--inside---");	
+//    	    	System.out.println("for(int k="+prev+";k<"+s.length()+"-("+i+"-"+j+");k++) {");
+//    			//=fac(s.length())/(fac(i-1)*fac(s.length()-(i-1)))
+//    	    	System.out.println("agreg:"+agreg);	
+    	    	
+    	    	for(;agreg<list.size();agreg++) {
+    	    		int diff = i - list.get(agreg).size();
+    	    		if(diff!=0 && agreg>s.length()) {
+    	    			if(agreg-1>=0) {
+    	    				LinkedList<String> temp = list.get(agreg-1);
+	    	    			for(int e=diff;e>0;e--) {
+	    	    				if(e-1>=0)
+	    	    					list.get(agreg).addFirst(temp.get(e-1));
+	    	    			}
+    	    			}
+    	    		}
+    	    	}
+    	    }
+    		return list;
     }
+    public int fac(int n) {
+        if (n > 12) throw new IllegalArgumentException(n + " is out of range");
+        return (1 > n) ? 1 : n * fac(n - 1);
+    }
+  
+    	
     public LinkedList<String> findPermutation(String s){
     	LinkedList<String> list = new LinkedList<String>();
     		
     	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
     	while(head!=null) {
-    		//System.out.println("head.value:"+head.value);
     		if(normalize(s).equals(normalize(head.value))) {
     			list.add(head.value);
     		}
@@ -307,20 +340,13 @@ class MyHashTable<K, V>
     	String s_norm= normalize(str);
     	int k = hashKey(s_norm);
     	
-    	//permutation
-    	str="dog";
-    	
-    	LinkedList<String> list = getPermutation(str);
-    	System.out.println(str+"'s list.size:"+list.size());
+    	LinkedList<String> list = getSubset(str);
+    //	System.out.println(str+"'s list.size:"+list.size());
     	HashNode<K,V> head;
     	
     	HashSet<String> permSet = new HashSet<String>();
-    	 
-        
-    
-       
-		for(String s: list) {
-			System.out.println(".."+s);
+    	for(String s: list) {
+	//		System.out.println(".."+s);
 	    	head = bucketArray[getBucketIndex(s)];
 	    	while(head!=null) {
 	    		//System.out.println("head.value:"+head.value);
@@ -329,12 +355,15 @@ class MyHashTable<K, V>
 	    		head = head.next;
 	    	}
 		}
-    	
-		 for(String s: permSet){
-	           System.out.println("__"+s);
-	        }
-		
-//    	return permutations;
+    	 System.out.println(str+"'s subsets:");
+    	 TreeSet myTreeSet = new TreeSet();
+    	 myTreeSet.addAll(permSet);
+    	 System.out.println(myTreeSet);
+//		 for(String s: permSet){
+//	           System.out.print(s+"  ");
+//	     }
+		 System.out.println();
+		 System.out.println("=========end=========");
     }
     public boolean isPrime(int n) {
     	return true;
