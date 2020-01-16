@@ -66,12 +66,12 @@ class MyHashTable<K, V>
     public static void main(String[] args) 
     { //mmm
     	
-        MyHashTable<String, String> map = new MyHashTable<>(20047); 
+        MyHashTable<String, String> map = new MyHashTable<>(110047); 
 
-        map.readAndAdd("src/lab11_scrabble/wordsList.txt");
+        map.readAndAdd("src/lab11_scrabble/wordsList_collins2019.txt");
 
-        System.out.println(map.size()); 
-        System.out.println(map.isEmpty()); 
+        System.out.println("map size : "+map.size()); 
+      //  System.out.println(map.isEmpty()); 
         
        map.getSizesOfChains();
         System.out.println("moreThan16:"+map.moreThan16); 
@@ -80,18 +80,19 @@ class MyHashTable<K, V>
 //        map.findPermutation("married");
 //        map.findPermutation("rabbies");
 //        map.findPermutation("Parsley");
-       int scrabble_num=7;
+       int numOfLetters=7;
       
-       char[] arr =new char[scrabble_num]; 
-        for(int i=0;i<scrabble_num;i++) {
+       char[] arr =new char[numOfLetters]; 
+        for(int i=0;i<numOfLetters;i++) {
         	int rnd = (int) (Math.random() * 26);
             char base = 'a';            
         	arr[i]=(char) (base + rnd % 26);
         }
+        //fn, ft, fv, fw, nt, tn, vt, wf, wt
         String rand=new String(arr);
         System.out.println(rand+" can create:");
         map.findSubset(rand);
-      //  System.out.println( map.get("ute"));
+     
          // map.getWordsFromSameBucket("dog");
     } 
     
@@ -189,7 +190,7 @@ class MyHashTable<K, V>
     public void add(int hashedKey, String keyStr) 
     { 
         // Find head of chain for given key 
-    	
+    	keyStr = keyStr.toLowerCase();
        int bucketIndex = getBucketIndex(keyStr); 
         HashNode<K, V> head = bucketArray[bucketIndex]; 
       
