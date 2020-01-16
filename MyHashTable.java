@@ -111,7 +111,10 @@ class MyHashTable<K, V>
     		i++;
     	}
     	//System.out.println(index+": "+i);
-    	if(i>16) moreThan16++;
+    	if(i>16) {
+    		System.out.println("over16: "+i);
+    		moreThan16++;
+    	}
     	if(i>100) moreThan100++;
     	return i;
     }
