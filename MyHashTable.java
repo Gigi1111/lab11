@@ -149,7 +149,7 @@ class MyHashTable<K, V>
         // Search key in chain 
         while (head != null) 
         { 
-            if (normalize(head.value).equals(normalize(key))) 
+            if (head.value.toLowerCase().equals(key.toLowerCase())) 
                 return head.value; 
             head = head.next; 
         } 
@@ -305,7 +305,7 @@ class MyHashTable<K, V>
     	System.out.println("\n*************************");
     	return list;
     }
-    public void findSubset(String str){//fff
+    public LinkedList<String> findSubset(String str){//fff
     	//Set<String> permutations = new Set<String>();
     	String s_norm= normalize(str);
     	int k = hashKey(s_norm);
@@ -338,17 +338,19 @@ class MyHashTable<K, V>
 			 }
 			 sort.get(s.length()).add(s);
 	     }
+		 LinkedList<String> forDict=new LinkedList<String>();
 		 int changeLine=0;
 		 for(int i=2;i<sort.size();i++){
 			 if(sort.get(i).size()>0)System.out.print(i+" letters: ");
 			 for(int j=0;j<sort.get(i).size();j++){
+				 forDict.add(sort.get(i).get(j));
 				 System.out.print(sort.get(i).get(j)+"  ");
 			 }
 			 if(sort.get(i).size()>0) System.out.println();
 	     }
 		 
 		 System.out.println();
-		 System.out.println("=========end=========");
+		 return forDict;
     }
     public boolean isPrime(int n) {
     	return true;

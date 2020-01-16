@@ -1,15 +1,17 @@
 package lab11_scrabble;
 
+import java.util.LinkedList;
+
 public class Scrabble_Cheater {
 
+	
 	 public static void main(String[] args) 
 	    { 
 	    	
-	        MyHashTable<String, String> map = new MyHashTable<>(110047,"src/lab11_scrabble/wordsList_collins2019.txt"); 
-	
+	        MyHashTable<Integer, String> map = new MyHashTable<>(110047,"src/lab11_scrabble/wordsList_collins2019.txt"); 
+	        Dictionary dict = new Dictionary(110047,"src/lab11_scrabble/wordsList_collins2019_def.txt");
 	        
-	
-////	        map.findPermutation("married");
+//	        map.findPermutation("married");
 ////	        map.findPermutation("rabbies");
 ////	        map.findPermutation("Parsley");
 	       int numOfLetters=7;
@@ -21,9 +23,14 @@ public class Scrabble_Cheater {
 	        	arr[i]=(char) (base + rnd % 26);
 	        }
 	        String rand=new String(arr);
-	       
-	        map.findSubset(rand);
-	     
+
+	        LinkedList<String> forDict=map.findSubset(rand);
+//	      LinkedList<String> forDict=map.findSubset("anagram");
+	      System.out.println("=========Definition=========");
+			 System.out.println("");
+	      for(String word:forDict) {
+	    	  dict.getDefinition(word);
+	      }
 	         // map.getWordsFromSameBucket("dog");
 	    } 
 	    
