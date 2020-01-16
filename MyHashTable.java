@@ -48,11 +48,11 @@ class MyHashTable<K, V>
     // Current size of array list 
     private int size; 
     
-    private  int moreThan16=0;
+    int moreThan16=0;
   
     // Constructor (Initializes capacity, size and 
     // empty chains. 
-    public MyHashTable(int size) 
+    public MyHashTable(int size, String filelocation) 
     { 
         bucketArray = new HashNode[size]; 
         numBuckets = size; 
@@ -60,42 +60,14 @@ class MyHashTable<K, V>
   
         // Create empty chains 
         for (int i = 0; i < numBuckets; i++) 
-            bucketArray[i]=null; 
-    } 
-  
-    public static void main(String[] args) 
-    { //mmm
-    	
-        MyHashTable<String, String> map = new MyHashTable<>(110047); 
-
-        map.readAndAdd("src/lab11_scrabble/wordsList_collins2019.txt");
-
-        System.out.println("map size : "+map.size()); 
-      //  System.out.println(map.isEmpty()); 
+            bucketArray[i]=null;
         
-       map.getSizesOfChains();
-        System.out.println("moreThan16:"+map.moreThan16); 
-//
-          
-//        map.findPermutation("married");
-//        map.findPermutation("rabbies");
-//        map.findPermutation("Parsley");
-       int numOfLetters=7;
-      
-       char[] arr =new char[numOfLetters]; 
-        for(int i=0;i<numOfLetters;i++) {
-        	int rnd = (int) (Math.random() * 26);
-            char base = 'a';            
-        	arr[i]=(char) (base + rnd % 26);
-        }
-        //fn, ft, fv, fw, nt, tn, vt, wf, wt
-        String rand=new String(arr);
-        System.out.println(rand+" can create:");
-        map.findSubset(rand);
-     
-         // map.getWordsFromSameBucket("dog");
+        readAndAdd(filelocation);
+        System.out.println("map size : "+size()); 
+        getSizesOfChains();
+        System.out.println("moreThan16:"+moreThan16); 
     } 
-    
+
     public int size() { return size; } 
     public boolean isEmpty() { return size() == 0; } 
   
@@ -185,6 +157,7 @@ class MyHashTable<K, V>
         // If key not found 
         return null; 
     } 
+    
   
     // Adds a key value pair to hash 
     public void add(int hashedKey, String keyStr) 
@@ -217,21 +190,18 @@ class MyHashTable<K, V>
    
     public LinkedList<String> getSubset(String s) {///gggp
     	LinkedList<LinkedList<String>> list = new LinkedList<LinkedList<String>>();
-   	LinkedList<String> list_formatted = new  LinkedList<String>();
+    	LinkedList<String> list_formatted = new  LinkedList<String>();
    		//s="0123456";
     	int size = s.length();
     
-    	 list.add(new LinkedList<String>());
+    	list.add(new LinkedList<String>());
     	agreg=0;
     	 for(int i=1; i<=s.length();i++) {
-    	//int i=5; //5!/3!2!=10 	
-    	//int i=3; //5!/3!2!=10
-    		//
     		list =recur(0,i,1, s,list); 
     		 list.add(new LinkedList<String>());
     	}
     	 int n=(int) Math.pow(2,s.length());
-    //	 System.out.println("agreg "+agreg+" is "+""+(n-1)+" :"+(agreg==n-1));
+//    //	 System.out.println("agreg "+agreg+" is "+""+(n-1)+" :"+(agreg==n-1));
 //    	for(LinkedList<String> li: list) {
 //    		for(String ss:li)
 //    			System.out.print(ss);
@@ -317,7 +287,6 @@ class MyHashTable<K, V>
         return (1 > n) ? 1 : n * fac(n - 1);
     }
   
-    	
     public LinkedList<String> findPermutation(String s){
     	LinkedList<String> list = new LinkedList<String>();
     		
@@ -356,13 +325,28 @@ class MyHashTable<K, V>
 	    		head = head.next;
 	    	}
 		}
-    	 System.out.println(str+"'s subsets:");
-    	 TreeSet myTreeSet = new TreeSet();
-    	 myTreeSet.addAll(permSet);
-    	 System.out.println(myTreeSet);
-//		 for(String s: permSet){
-//	           System.out.print(s+"  ");
-//	     }
+    	 System.out.println("\""+str+"\""+" can create:");
+    	 //
+//    	 TreeSet myTreeSet = new TreeSet();
+//    	 myTreeSet.addAll(permSet);
+//    	 System.out.println(myTreeSet);
+    	 LinkedList<LinkedList<String>> sort =new LinkedList<LinkedList<String>>();
+    	// System.out.println(sort.get(0));
+		 for(String s: permSet){
+			 while(sort.size()<str.length()+1) {
+				 sort.add(new LinkedList<String>());
+			 }
+			 sort.get(s.length()).add(s);
+	     }
+		 int changeLine=0;
+		 for(int i=2;i<sort.size();i++){
+			 if(sort.get(i).size()>0)System.out.print(i+" letters: ");
+			 for(int j=0;j<sort.get(i).size();j++){
+				 System.out.print(sort.get(i).get(j)+"  ");
+			 }
+			 if(sort.get(i).size()>0) System.out.println();
+	     }
+		 
 		 System.out.println();
 		 System.out.println("=========end=========");
     }
@@ -400,8 +384,7 @@ class MyHashTable<K, V>
 //    	return true;
 //    }
     public LinkedList<String> getWordsFromSameBucket(String s) {
-    //	s="key";
-//    	
+    
     	LinkedList<String> list = new LinkedList<String>();
     	
     	HashNode<K,V> head = 	bucketArray[getBucketIndex(s)];
