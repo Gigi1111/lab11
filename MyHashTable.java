@@ -67,13 +67,17 @@ class MyHashTable<K, V>
         getSizesOfChains();
         System.out.println("moreThan16:"+moreThan16); 
     } 
+    public MyHashTable() 
+    { 
+        
+    } 
 
     public int size() { return size; } 
     public boolean isEmpty() { return size() == 0; } 
   
     // This implements hash function to find index 
     // for a key 
-    private int getBucketIndex(String keyStr) 
+    protected int getBucketIndex(String keyStr) 
     { 
         int hashCode = hashKey(normalize(keyStr)); 
         int index = hashCode % numBuckets; 
