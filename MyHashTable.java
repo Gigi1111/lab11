@@ -11,8 +11,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,11 +47,12 @@ class MyHashTable<K, V>
     // Current capacity of array list 
     private static int numBuckets; 
   
+    Map<String,Integer> points;
     // Current size of array list 
     private int size; 
     
     int moreThan16=0;
-  
+    int moreThan100=0;
     // Constructor (Initializes capacity, size and 
     // empty chains. 
     public MyHashTable(int size, String filelocation) 
@@ -63,9 +66,16 @@ class MyHashTable<K, V>
             bucketArray[i]=null;
         
         readAndAdd(filelocation);
-        System.out.println("map size : "+size()); 
+        initializePoints();
+//        System.out.println(points.get("i"));
+        System.out.println("num of entry : "+size());    
+        System.out.println("map size : "+numBuckets); 
+        System.out.println("load : "+((float)size())/numBuckets); 
+        
         getSizesOfChains();
         System.out.println("moreThan16:"+moreThan16); 
+        System.out.println("moreThan100:"+moreThan100); 
+        
     } 
     public MyHashTable() 
     { 
@@ -102,6 +112,7 @@ class MyHashTable<K, V>
     	}
     	//System.out.println(index+": "+i);
     	if(i>16) moreThan16++;
+    	if(i>100) moreThan100++;
     	return i;
     }
     // Method to remove a given key 
@@ -315,27 +326,30 @@ class MyHashTable<K, V>
     	int k = hashKey(s_norm);
     	
     	LinkedList<String> list = getSubset(str);
-    //	System.out.println(str+"'s list.size:"+list.size());
+    	System.out.println(str+"'s list.size:"+list.size());
     	HashNode<K,V> head;
     	
     	HashSet<String> permSet = new HashSet<String>();
     	for(String s: list) {
-	//		System.out.println(".."+s);
-	    	head = bucketArray[getBucketIndex(s)];
-	    	while(head!=null) {
-	    		//System.out.println("head.value:"+head.value);
-	    		if(normalize(s).equals(normalize(head.value))) permSet.add(head.value);
-	    		
-	    		head = head.next;
+    		if(s.contains("-")) {
+    			matchSubsetWithBlank(s,permSet);
+    		}else {
+				//System.out.println(".."+s);
+		    	head = bucketArray[getBucketIndex(s)];
+		    	while(head!=null) {
+		    		//System.out.println("head.value:"+head.value);
+		    		if(normalize(s).equals(normalize(head.value))) permSet.add(head.value);
+		    		
+		    		head = head.next;
+		    	}
 	    	}
 		}
     	 System.out.println("\""+str+"\""+" can create:");
-    	 //
-//    	 TreeSet myTreeSet = new TreeSet();
-//    	 myTreeSet.addAll(permSet);
-//    	 System.out.println(myTreeSet);
+    	
+    	 
+    	 //reorder so show from less to more letters
     	 LinkedList<LinkedList<String>> sort =new LinkedList<LinkedList<String>>();
-    	// System.out.println(sort.get(0));
+    	 
 		 for(String s: permSet){
 			 while(sort.size()<str.length()+1) {
 				 sort.add(new LinkedList<String>());
@@ -343,18 +357,59 @@ class MyHashTable<K, V>
 			 sort.get(s.length()).add(s);
 	     }
 		 LinkedList<String> forDict=new LinkedList<String>();
-		 int changeLine=0;
+		
+		 
 		 for(int i=2;i<sort.size();i++){
-			 if(sort.get(i).size()>0)System.out.print(i+" letters: ");
+			 int changeLine=0;
+			 if(sort.get(i).size()>0) {
+				 System.out.println("----------------------- "+i+" letters --------------------------");
+			 }
 			 for(int j=0;j<sort.get(i).size();j++){
 				 forDict.add(sort.get(i).get(j));
+				 if((10-i)>0 && changeLine%(13-i)==0 && changeLine!=0 && j!=0) System.out.println();
 				 System.out.print(sort.get(i).get(j)+"  ");
+				 changeLine++;
 			 }
 			 if(sort.get(i).size()>0) System.out.println();
 	     }
 		 
 		 System.out.println();
 		 return forDict;
+    }
+    public void matchSubsetWithBlank(String s, Set permSet) {
+    	//System.out.println("yes and :"+s.indexOf("-"));
+    	LinkedList<String> possibilities = new LinkedList<String>();
+    	
+    	char base = 'a';
+    	int count = s.length() - s.replaceAll("-","").length();
+    	
+    	while((int)base<=(int)'z') {
+    		possibilities.add(s.replace("-",(""+base)));
+    		base = (char) (base+1);
+    		//System.out.println("base:"+base);
+    		
+    		 if(count==2) {
+    			char base2 = 'a';
+    			while((int)base2<=(int)'z') {
+    				String temp = possibilities.getLast();
+    				temp = temp.replace("-",(""+base2));
+    				possibilities.set(possibilities.size()-1,temp);
+    	    		base++;
+    			}
+    		}
+    	}
+    	
+		HashNode<K,V> head;
+    		for(String p: possibilities) {
+			//	System.out.println("_"+p);
+		    	head = bucketArray[getBucketIndex(p)];
+		    	while(head!=null) {
+		    		//System.out.println("head.value:"+head.value);
+		    		if(normalize(p).equals(normalize(head.value))) permSet.add(head.value);
+		    		
+		    		head = head.next;
+		    	}
+    		}
     }
     public boolean isPrime(int n) {
     	return true;
@@ -393,7 +448,7 @@ class MyHashTable<K, V>
     
     	LinkedList<String> list = new LinkedList<String>();
     	
-    	HashNode<K,V> head = 	bucketArray[getBucketIndex(s)];
+    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
     	while(head!=null) {
     		System.out.print(head.value+"  ");
     		head=head.next;
@@ -407,16 +462,7 @@ class MyHashTable<K, V>
         Arrays.sort(temp); 
         return new String(temp); 
     }
-    public int hashKey(String keyStr) {
-    	int key=0;
-    	int prime1=53;
-    	for(int i=0;i<keyStr.length();i++) {
-    		key += (int)(keyStr.charAt(i))*prime1*i;
-    	}
-    	//int numOfBuckets = 139;
-    	
-    	return key;
-    }
+    
     public int keyToIndex(int key) {
     	return key%numBuckets;
     }
@@ -424,16 +470,6 @@ class MyHashTable<K, V>
 	{  
 		try{  
 			File file=new File(fileLocation);    //creates a new file instance  
-//			FileReader fr=new FileReader(file);   //reads the file  
-//			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
-//			for(String line="";(line=br.readLine())!=null;){  
-//				System.out.println(line); 
-//				String[] words = line.split(",");
-//				for(String word:words) {
-//					System.out.println(word);
-//					
-//				}
-//			}  
 			FileReader fr=new FileReader(file);   //reads the file  
 			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
 			for(String line="";(line=br.readLine())!=null;){  
@@ -449,5 +485,34 @@ class MyHashTable<K, V>
 			e.printStackTrace();  
 		}  
 		
-	}  
+	} 
+    public void initializePoints() {
+    	 points= new HashMap<String,Integer>();
+        points.put("q",10);points.put("z",10); 
+        points.put("j",8);points.put("x",8); 
+        points.put("k",5);
+        points.put("f",4);points.put("h",4);points.put("v",4);points.put("w",4);points.put("y",4);
+        points.put("b",3);points.put("c",3);points.put("m",3);points.put("p",3);
+        points.put("g",2);points.put("d",2);
+        points.put("l",1); points.put("s",1); points.put("u",1); points.put("n",1); points.put("r",1); points.put("t",1); points.put("o",1); points.put("a",1); points.put("i",1); points.put("e",1); 
+    }
+    public static void main(String[] args) {//30637 , 39989,25163
+    	 MyHashTable<Integer, String> map = new MyHashTable<>(57787,"src/lab11_scrabble/wordsList_collins2019.txt"); 
+	       map.findSubset("br-");
+    }public int hashKey(String keyStr) {
+    	long key=0;
+    	//57787
+    	//94447: 16
+    	//80677 : 17 ; 80527: 18 80051/80513；19
+    	long prime1=94447;//39989;
+    	for(int i=0;i<keyStr.length();i++) {
+    		if(key>0 && i>0)
+    			key = key*(long)(keyStr.charAt(i))*prime1*i%numBuckets;
+    		else
+    			key = (long)(keyStr.charAt(i))%numBuckets;
+    	}
+    	//int numOfBuckets = 139;
+    	
+    	return (int)key%numBuckets;
+    }
 } 

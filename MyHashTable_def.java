@@ -202,4 +202,5 @@ class MyHashTable_def<K, V> extends MyHashTable
 		}  
 		
 	}  
+    public int size() { return size; } 
 } 
