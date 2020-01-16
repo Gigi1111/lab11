@@ -501,7 +501,13 @@ class MyHashTable<K, V>
     }
     public static void main(String[] args) {//30637 , 39989,25163
     	 MyHashTable<Integer, String> map = new MyHashTable<>(57787,"src/lab11_scrabble/wordsList_collins2019.txt"); 
-	       map.findSubset("br-");
+//	       map.findSubset("contrabnd-");
+    	 map.findSubset("bk-");
+	      System.out.println( map.get("symphony"));
+	      System.out.println( map.get("messiah"));
+	      System.out.println( map.get("counterfeit"));
+	      System.out.println( map.get("contraband"));
+    
     }public int hashKey(String keyStr) {
     	long key=0;
     	//57787
