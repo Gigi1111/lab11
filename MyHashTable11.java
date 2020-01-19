@@ -89,7 +89,7 @@ class MyHashTable11
     public String remove(String key) 
     { 
         // Apply hash function to find index for given key 
-        int bucketIndex = getBucketIndex(key); 
+        int bucketIndex = hashKey(key); 
   
         // Get head of chain 
         HashNode head = bucketArray[bucketIndex]; 
@@ -125,7 +125,7 @@ class MyHashTable11
     public String get(String key) 
     { 
         // Find head of chain for given key 
-        int bucketIndex = getBucketIndex(key); 
+        int bucketIndex = hashKey(key); 
         HashNode head = bucketArray[bucketIndex]; 
   
         // Search key in chain 
@@ -146,7 +146,7 @@ class MyHashTable11
     { 
         // Find head of chain for given key 
     	keyStr = keyStr.toLowerCase();
-        int bucketIndex = getBucketIndex(keyStr); 
+        int bucketIndex = hashKey(keyStr); 
         HashNode head = bucketArray[bucketIndex]; 
       
         // Check if key is already present 
@@ -171,12 +171,7 @@ class MyHashTable11
 
     // This implements hash function to find index 
     // for a key 
-    protected int getBucketIndex(String keyStr) 
-    { 
-        int hashCode = hashKey(normalize(keyStr)); 
-        int index = hashCode % numBuckets; 
-        return index; 
-    }
+   
   
     public int[] getSizesOfChains() {
     	int[] sizes = new int[numBuckets];
@@ -212,7 +207,7 @@ class MyHashTable11
     public LinkedList<String> findPermutation(String s){
     	LinkedList<String> list = new LinkedList<String>();
     		
-    	HashNode head = bucketArray[getBucketIndex(s)];
+    	HashNode head = bucketArray[hashKey(s)];
     	while(head!=null) {
     		if(normalize(s).equals(normalize(head.value))) {
     			list.add(head.value);
@@ -234,7 +229,7 @@ class MyHashTable11
     
     	LinkedList<String> list = new LinkedList<String>();
     	
-    	HashNode head = bucketArray[getBucketIndex(s)];
+    	HashNode head = bucketArray[hashKey(s)];
     	while(head!=null) {
     		System.out.print(head.value+"  ");
     		head=head.next;
