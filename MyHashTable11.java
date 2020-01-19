@@ -41,6 +41,9 @@ class MyHashTable11
     // empty buckets
     int empty=0;
     
+ // Collisions with more than 1 elements
+    int moreThan1=0;
+    
     // Collisions with more than 16 elements
     int moreThan16=0;
     
@@ -77,8 +80,9 @@ class MyHashTable11
         System.out.println("Collisions (more than 1 word hashed to same value): " +collision );
         System.out.println("Empty Buckets: " +empty); 
         System.out.println("collisions + non-empty Buckets: " +(numBuckets - empty + collision)); 
-        System.out.println("Collisions with more than 16 chains:" +moreThan16); 
-        System.out.println("Collisions with more than 100 chains:" +moreThan100); 
+        System.out.println("Chains with more than 1 words:" +moreThan1); 
+        System.out.println("Chains with more than 16 words:" +moreThan16); 
+        System.out.println("Chains with more than 100 words:" +moreThan100); 
         
     } 
 
@@ -180,7 +184,6 @@ class MyHashTable11
     		sizes[i] = getSizeOfSingleChain(i);
     		i++;
     	}
-    	//System.out.println(i);
     	return sizes;
     }
     public int getSizeOfSingleChain(int index) {
@@ -191,11 +194,11 @@ class MyHashTable11
     		current = current.next;
     		i++;
     	}
-    	if(longestChain<i) { 	// longest chain is initialized 0 as a field
+    	if(longestChain<i)// longest chain is initialized 0 as a field
     		longestChain = i;
-    	}
-
     	if(i==0) empty++;
+    	if(i>2)
+    		moreThan1++;
     	if(i>16) {
     		System.out.println("over16: "+i);
     		moreThan16++;
