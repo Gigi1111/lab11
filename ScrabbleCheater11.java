@@ -19,7 +19,7 @@ public class ScrabbleCheater11 {
 	    { 
 	//	 ScrabbleCheater11 cheat = new ScrabbleCheater11();
 	//	 Dictionary11 dict = new Dictionary11(1,"C:\\words\\words-279k.txt");
-	     MyHashTable11<Integer, String> map = new MyHashTable11<>(75011,"src/lab11_scrabble/wordsList_collins2019.txt"); 
+	     MyHashTable11 map = new MyHashTable11(75011,"src/lab11_scrabble/wordsList_collins2019.txt"); 
 	        	
 	     	
 	        

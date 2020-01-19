@@ -13,17 +13,17 @@ import java.util.Set;
 	
   
 // Class to represent entire hash table 
-class MyHashTable11<K, V> 
+class MyHashTable11 
 { 
 	// A node of chains 
-		class HashNode<K, V> 
+		class HashNode 
 		{ 
 			int key; 
 			String value; 
 	   
 	  
 			// Reference to next node 
-			HashNode<K, V> next; 
+			HashNode next; 
 	  
 			// Constructor 
 			public HashNode(int hashedKey, String keyStr) 
@@ -33,7 +33,7 @@ class MyHashTable11<K, V>
 			} 
 		} 
     // bucketArray is used to store array of chains 
-    private HashNode<K, V>[] bucketArray; 
+    private HashNode[] bucketArray; 
   
     // Size of array ( prime number ) 
     private static int numBuckets; 
@@ -102,10 +102,10 @@ class MyHashTable11<K, V>
         int bucketIndex = getBucketIndex(key); 
   
         // Get head of chain 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+        HashNode head = bucketArray[bucketIndex]; 
   
         // Search for key in its chain 
-        HashNode<K, V> prev = null; 
+        HashNode prev = null; 
         while (head != null) 
         { 
             // If Key found 
@@ -139,7 +139,7 @@ class MyHashTable11<K, V>
     	
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+        HashNode head = bucketArray[bucketIndex]; 
   
         // Search key in chain 
         while (head != null) 
@@ -160,7 +160,7 @@ class MyHashTable11<K, V>
         // Find head of chain for given key 
     	keyStr = keyStr.toLowerCase();
        int bucketIndex = getBucketIndex(keyStr); 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+        HashNode head = bucketArray[bucketIndex]; 
       
         // Check if key is already present 
         while (head != null) 
@@ -181,7 +181,7 @@ class MyHashTable11<K, V>
         if(head!=null)
         	collision++;
         
-        HashNode<K, V> newNode = new HashNode<K, V>(hashedKey, keyStr); 
+        HashNode newNode = new HashNode(hashedKey, keyStr); 
         newNode.next = head; 
         bucketArray[bucketIndex]=newNode; 
     } 
@@ -197,7 +197,7 @@ class MyHashTable11<K, V>
     public int[] getSizesOfChains() {
     	int[] sizes = new int[numBuckets];
     	int i=0;
-    	for(HashNode<K,V> n: bucketArray) {
+    	for(HashNode n: bucketArray) {
     		sizes[i] = getSizeOfSingleChain(i);
     		i++;
     	}
@@ -205,7 +205,7 @@ class MyHashTable11<K, V>
     	return sizes;
     }
     public int getSizeOfSingleChain(int index) {
-    	HashNode<K,V> current = bucketArray[index];
+    	HashNode current = bucketArray[index];
     	int i =0;
     	
     	while(current!=null) {
@@ -232,7 +232,7 @@ class MyHashTable11<K, V>
     public LinkedList<String> findPermutation(String s){
     	LinkedList<String> list = new LinkedList<String>();
     		
-    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	HashNode head = bucketArray[getBucketIndex(s)];
     	while(head!=null) {
     		if(normalize(s).equals(normalize(head.value))) {
     			list.add(head.value);
@@ -254,7 +254,7 @@ class MyHashTable11<K, V>
     
     	LinkedList<String> list = new LinkedList<String>();
     	
-    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	HashNode head = bucketArray[getBucketIndex(s)];
     	while(head!=null) {
     		System.out.print(head.value+"  ");
     		head=head.next;
