@@ -10,22 +10,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
   
-	
-  
-// Class to represent entire hash table 
+
 class MyHashTable11 
 { 
-	// A node of chains 
 		class HashNode 
 		{ 
 			int key; 
 			String value; 
-	   
-	  
-			// Reference to next node 
 			HashNode next; 
 	  
-			// Constructor 
 			public HashNode(int hashedKey, String keyStr) 
 			{ 
 				this.key = hashedKey; 
@@ -36,7 +29,7 @@ class MyHashTable11
     private HashNode[] bucketArray; 
   
     // Size of array ( prime number ) 
-    private static int numBuckets; 
+    static int numBuckets; 
   
     Map<String,Integer> points;
     // Current size of array list 
@@ -64,8 +57,9 @@ class MyHashTable11
         bucketArray = new HashNode[size]; 
         numBuckets = size; 
        
+        
         // Create empty chains 
-        for (int i = 0; i < numBuckets; i++) 
+        for (int i=0;i<numBuckets;i++) 
             bucketArray[i]=null;
         
         readAndAdd(filelocation);
@@ -87,10 +81,6 @@ class MyHashTable11
         System.out.println("Collisions with more than 100 chains:" +moreThan100); 
         
     } 
-    public MyHashTable11() 
-    { 
-        
-    } 
 
     public int size() { return size; } 
     public boolean isEmpty() { return size() == 0; } 
@@ -107,16 +97,14 @@ class MyHashTable11
         // Search for key in its chain 
         HashNode prev = null; 
         while (head != null) 
-        { 
-            // If Key found 
+        {   // If Key found 
             if (head.value.equals(key)) 
                 break; 
-  
             // Else keep moving in chain 
             prev = head; 
             head = head.next; 
         } 
-  
+        
         // If key was not there 
         if (head == null) 
             return null; 
@@ -136,7 +124,6 @@ class MyHashTable11
     // Returns value for a key 
     public String get(String key) 
     { 
-    	
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
         HashNode head = bucketArray[bucketIndex]; 
@@ -159,25 +146,21 @@ class MyHashTable11
     { 
         // Find head of chain for given key 
     	keyStr = keyStr.toLowerCase();
-       int bucketIndex = getBucketIndex(keyStr); 
+        int bucketIndex = getBucketIndex(keyStr); 
         HashNode head = bucketArray[bucketIndex]; 
       
         // Check if key is already present 
         while (head != null) 
         { 
-            if (head.value.equals(keyStr)) 
-            { 
-                //already exists
-                return; 
-            } 
+            if (head.value.equals(keyStr))  return; 
             head = head.next; 
         } 
-//  
+
         // Insert key in chain 
         size++; 
         head = bucketArray[bucketIndex]; 
         
-        //if the location already stores something there, collision happens
+        //If the location already stores something there, collision happens
         if(head!=null)
         	collision++;
         
@@ -193,7 +176,8 @@ class MyHashTable11
         int hashCode = hashKey(normalize(keyStr)); 
         int index = hashCode % numBuckets; 
         return index; 
-    } 
+    }
+  
     public int[] getSizesOfChains() {
     	int[] sizes = new int[numBuckets];
     	int i=0;
@@ -215,11 +199,7 @@ class MyHashTable11
     	if(longestChain<i) { 	// longest chain is initialized 0 as a field
     		longestChain = i;
     	}
-    //	if(i>10) {
-    //	longestChain = i;
-    //		System.out.println("The longest chain is: "+i);
-    //	}
-    	//System.out.println(index+": "+i);
+
     	if(i==0) empty++;
     	if(i>16) {
     		System.out.println("over16: "+i);
