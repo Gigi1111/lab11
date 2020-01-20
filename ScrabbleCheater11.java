@@ -69,6 +69,9 @@ public class ScrabbleCheater11 {
 	        	System.out.println();
 	        	htable.findPermutation("ashbdap");
 	        	
+	        	//test remove and size()
 	        	System.out.println(htable.remove("speaned"));
+	        	System.out.println(htable.get("speaned"));
+	        	System.out.println(htable.size());
 	    } 
 }

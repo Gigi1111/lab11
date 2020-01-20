@@ -93,7 +93,7 @@ class MyHashTable11
     public String remove(String key) 
     { 
         // Apply hash function to find index for given key 
-        int bucketIndex = hashKey(key); 
+        int bucketIndex =  getBucketIndex(key); 
   
         // Get head of chain 
         HashNode head = bucketArray[bucketIndex]; 
@@ -129,7 +129,7 @@ class MyHashTable11
     public String get(String key) 
     { 
         // Find head of chain for given key 
-        int bucketIndex = hashKey(key); 
+        int bucketIndex =  getBucketIndex(key); 
         HashNode head = bucketArray[bucketIndex]; 
   
         // Search key in chain 
@@ -150,7 +150,7 @@ class MyHashTable11
     { 
         // Find head of chain for given key 
     	keyStr = keyStr.toLowerCase();
-        int bucketIndex = hashKey(keyStr); 
+        int bucketIndex =  getBucketIndex(keyStr); 
         HashNode head = bucketArray[bucketIndex]; 
       
         // Check if key is already present 
@@ -210,7 +210,7 @@ class MyHashTable11
     public LinkedList<String> findPermutation(String s){
     	LinkedList<String> list = new LinkedList<String>();
     		
-    	HashNode head = bucketArray[hashKey(s)];
+    	HashNode head = bucketArray[ getBucketIndex(s)];
     	while(head!=null) {
     		if(normalize(s).equals(normalize(head.value))) {
     			list.add(head.value);
@@ -232,7 +232,7 @@ class MyHashTable11
     
     	LinkedList<String> list = new LinkedList<String>();
     	
-    	HashNode head = bucketArray[hashKey(s)];
+    	HashNode head = bucketArray[ getBucketIndex(s)];
     	while(head!=null) {
     		System.out.print(head.value+"  ");
     		head=head.next;
@@ -271,7 +271,10 @@ class MyHashTable11
 			e.printStackTrace();  
 		}  
 	} // end readAndAdd
-    
+    public int getBucketIndex(String s) {
+    	
+    	return hashKey(normalize(s));
+    }
     // Hashing function. Maps an Integer to
     // an index in the array and returns it
     public int hashKey(String keyStr) {
@@ -285,7 +288,7 @@ class MyHashTable11
     			key = (long)(keyStr.charAt(i)) % numBuckets;
     	}
 
-    	return (int) key % numBuckets;
+    	return (int) key ;
     } // end hashKey
 
 } 
