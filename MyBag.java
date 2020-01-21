@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class MyBag {
+public class MyBag implements MyBag_Interface{
 	String s_old;
 //	store letters
 	LinkedList<String> list = new LinkedList<String>();
