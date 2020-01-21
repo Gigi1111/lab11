@@ -392,7 +392,7 @@ class MyHashTable
     }
     public void findSubstringsWithBag(String str){
     	substringList=new LinkedList<LinkedList<String>>();
-    	MyBag bag = new MyBag(str);
+    	MyBagWithLinkedList bag = new MyBagWithLinkedList(str);
     	System.out.println(bag.toString());
     	
 	int size = bag.size();

@@ -7,7 +7,7 @@ public class Scrabble_Cheater {
 	public Scrabble_Cheater(){
 		//1 kjxqz , 2 bcmpfhvwy, 3g 
 		//4 lsud,6 nrt,8 o,9 ai,12 e,2 blank
-		scrabble_letters = new MyBag("--kjxqzbcmpfhvwybcmpfhvwyggglsudlsudlsudlsudnrtnrtnrtnrtnrtnrtooooooooaiaiaiaiaiaiaiaiaieeeeeeeeeeee");
+		scrabble_letters = new MyBagWithLinkedList("--kjxqzbcmpfhvwybcmpfhvwyggglsudlsudlsudlsudnrtnrtnrtnrtnrtnrtooooooooaiaiaiaiaiaiaiaiaieeeeeeeeeeee");
 	}
 	public static void main(String[] args) {//30637 , 39989,25163
 		Scrabble_Cheater cheater = new Scrabble_Cheater();
