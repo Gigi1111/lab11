@@ -392,11 +392,11 @@ class MyHashTable
     }
     public void findSubstringsWithBag(String str){
     	substringList=new LinkedList<LinkedList<String>>();
-    	MyBagWithLinkedList bag = new MyBagWithLinkedList(str);
+    	MyBag bag = new MyBagWithLinkedList(str);
     	System.out.println(bag.toString());
     	
 	int size = bag.size();
-	System.out.println("Substrings of "+bag.s_old+" :");
+	System.out.println("Substrings of "+str+" :");
 	for(int i =2; i<=size;i++) {//get 2,3...,size lengths of substrings
 		LinkedList<String> substringsOfCertainLength= bag.getSubstringsOfLength(i);
 		substringList.add(substringsOfCertainLength);
