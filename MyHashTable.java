@@ -4,7 +4,7 @@
 //permutation
 //chain of 100 or less is ok too
 
-package lab11_scrabble;
+package lab12_scrabble_cheater;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,38 +15,44 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.text.html.HTMLDocument.Iterator; 
   
 // A node of chains 
-class HashNode<K, V> 
+class HashNode 
 { 
    int key; 
     String value; 
-   
+   String def;
   
     // Reference to next node 
-    HashNode<K, V> next; 
+    HashNode next; 
   
     // Constructor 
-    public HashNode(int hashedKey, String keyStr) 
+    public HashNode(int hashedKey, String keyStr, String def) 
     { 
         this.key = hashedKey; 
         this.value = keyStr; 
+        this.def = def;
     } 
 } 
   
 // Class to represent entire hash table 
-class MyHashTable<K, V> 
-{ 
+class MyHashTable 
+{
     // bucketArray is used to store array of chains 
-    private HashNode<K, V>[] bucketArray; 
+    private HashNode[] bucketArray; 
   
     // Current capacity of array list 
     private static int numBuckets; 
-  
+    
+    //substrings of a given string
+    LinkedList<LinkedList<String>> substringList;
+    
+    
     Map<String,Integer> points;
     // Current size of array list 
     private int size; 
@@ -70,11 +76,11 @@ class MyHashTable<K, V>
 //        System.out.println(points.get("i"));
         System.out.println("num of entry : "+size());    
         System.out.println("map size : "+numBuckets); 
-        System.out.println("load : "+((float)size())/numBuckets); 
+       // System.out.println("load : "+((float)size())/numBuckets); 
         
         getSizesOfChains();
         System.out.println("moreThan16:"+moreThan16); 
-        System.out.println("moreThan100:"+moreThan100); 
+        //System.out.println("moreThan100:"+moreThan100); 
         
     } 
     public MyHashTable() 
@@ -96,7 +102,7 @@ class MyHashTable<K, V>
     public int[] getSizesOfChains() {
     	int[] sizes = new int[numBuckets];
     	int i=0;
-    	for(HashNode<K,V> n: bucketArray) {
+    	for(HashNode n: bucketArray) {
     		sizes[i] = getSizeOfSingleChain(i);
     		i++;
     	}
@@ -104,7 +110,7 @@ class MyHashTable<K, V>
     	return sizes;
     }
     public int getSizeOfSingleChain(int index) {
-    	HashNode<K,V> current = bucketArray[index];
+    	HashNode current = bucketArray[index];
     	int i =0;
     	while(current!=null) {
     		current = current.next;
@@ -112,7 +118,7 @@ class MyHashTable<K, V>
     	}
     	//System.out.println(index+": "+i);
     	if(i>16) {
-    		System.out.println("over16: "+i);
+    	//	System.out.println("over16: "+i);
     		moreThan16++;
     	}
     	if(i>100) moreThan100++;
@@ -125,10 +131,10 @@ class MyHashTable<K, V>
         int bucketIndex = getBucketIndex(key); 
   
         // Get head of chain 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+        HashNode head = bucketArray[bucketIndex]; 
   
         // Search for key in its chain 
-        HashNode<K, V> prev = null; 
+        HashNode prev = null; 
         while (head != null) 
         { 
             // If Key found 
@@ -162,7 +168,7 @@ class MyHashTable<K, V>
     	
         // Find head of chain for given key 
         int bucketIndex = getBucketIndex(key); 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+        HashNode head = bucketArray[bucketIndex]; 
   
         // Search key in chain 
         while (head != null) 
@@ -175,15 +181,57 @@ class MyHashTable<K, V>
         // If key not found 
         return null; 
     } 
-    
+    public String getDef(String key) 
+    { 
+    	
+        // Find head of chain for given key 
+        int bucketIndex = getBucketIndex(key); 
+        HashNode head = bucketArray[bucketIndex]; 
+  
+        // Search key in chain 
+        while (head != null) 
+        { 
+            if (head.value.toLowerCase().equals(key.toLowerCase())) 
+                return head.def; 
+            head = head.next; 
+        } 
+  
+        // If key not found 
+        return "can't find "+key; 
+    } 
   
     // Adds a key value pair to hash 
-    public void add(int hashedKey, String keyStr) 
+    public void add(String keyStr) 
     { 
+    	boolean breakLine=false;
+    	String def="";
+    	char base = 'A';
+    	//check current capital, next >= 1 space, then 
+    	for(int i=0;i<keyStr.length()-1;i++) {
+    		int cur = keyStr.charAt(i)-base;
+    		int next = keyStr.charAt(i+1)-base;
+    		if((cur<26 && cur>=0) && (next>26||next<0)) {
+    			def=keyStr.substring(i+1);
+    			keyStr=keyStr.substring(0,i+1);
+    			keyStr=keyStr.replaceAll("\\s","");
+    			breakLine=true;
+    			break;
+    		}
+    	}
+    	if(!breakLine) {
+    	//	System.out.println("nuhu");
+    		return;
+    	}
+    	
+    	//System.out.println(keyStr);
+    	
+    	//System.out.println(keyStr+def);
+    	
+    	int hashedKey = hashKey(normalize(keyStr));
+    	
         // Find head of chain for given key 
-    	keyStr = keyStr.toLowerCase();
-       int bucketIndex = getBucketIndex(keyStr); 
-        HashNode<K, V> head = bucketArray[bucketIndex]; 
+       int bucketIndex = getBucketIndex(keyStr.toLowerCase()); 
+        HashNode head = bucketArray[bucketIndex]; 
       
         // Check if key is already present 
         while (head != null) 
@@ -199,7 +247,7 @@ class MyHashTable<K, V>
         // Insert key in chain 
         size++; 
         head = bucketArray[bucketIndex]; 
-        HashNode<K, V> newNode = new HashNode<K, V>(hashedKey, keyStr); 
+        HashNode newNode = new HashNode(hashedKey, keyStr.toLowerCase(), def); 
         newNode.next = head; 
         bucketArray[bucketIndex]=newNode; 
     } 
@@ -306,79 +354,61 @@ class MyHashTable<K, V>
     }
   
     public LinkedList<String> findPermutation(String s){
-    	LinkedList<String> list = new LinkedList<String>();
-    		
-    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	LinkedList<String> validWords = new LinkedList<String>();
+    	LinkedList<String> substring= new LinkedList<String>();
+    	
+    	if(s.contains("-")) {
+    		for(int i=0;i<26;i++) {
+				String temp=s.replaceFirst("-", ""+(char)('a'+i));
+				
+				if(temp.contains("-")) {
+					for(int t=0;t<26;t++) {
+						String temp2=temp.replaceFirst("-", ""+(char)('a'+t));
+						substring.add(temp2);
+					}
+					
+				}else {
+				substring.add(temp);
+			}
+    		}
+	    	
+    	}else { substring.add(s);}
+    	for(int i=0;i<substring.size();i++) {
+    	HashNode head = bucketArray[getBucketIndex(substring.get(i))];
     	while(head!=null) {
-    		if(normalize(s).equals(normalize(head.value))) {
-    			list.add(head.value);
+    		if(normalize(substring.get(i)).equals(normalize(head.value))) {
+    			validWords.add(head.value);
     		}
     		
     		head = head.next;
     	}
-    	System.out.println("anagrams for "+s+" :");
-    	for(String ss:list) {
-    		System.out.print(ss+"  ");
     	}
-    	System.out.println("\n*************************");
-    	return list;
+//    	System.out.println("anagrams for "+s+" :");
+//    	for(String ss:list) {
+//    		System.out.print(ss+"  ");
+//    	}
+//    	System.out.println("\n*************************");
+    	return validWords;
     }
-    public LinkedList<String> findSubset(String str){//fff
-    	//Set<String> permutations = new Set<String>();
-    	String s_norm= normalize(str);
-    	int k = hashKey(s_norm);
+    public void findSubstringsWithBag(String str){
+    	substringList=new LinkedList<LinkedList<String>>();
+    	MyBag bag = new MyBag(str);
+    	System.out.println(bag.toString());
     	
-    	LinkedList<String> list = getSubset(str);
-    	System.out.println(str+"'s list.size:"+list.size());
-    	HashNode<K,V> head;
-    	
-    	HashSet<String> permSet = new HashSet<String>();
-    	for(String s: list) {
-    		if(s.contains("-")) {
-    			matchSubsetWithBlank(s,permSet);
-    		}else {
-				//System.out.println(".."+s);
-		    	head = bucketArray[getBucketIndex(s)];
-		    	while(head!=null) {
-		    		//System.out.println("head.value:"+head.value);
-		    		if(normalize(s).equals(normalize(head.value))) permSet.add(head.value);
-		    		
-		    		head = head.next;
-		    	}
-	    	}
+	int size = bag.size();
+	System.out.println("Substrings of "+bag.s_old+" :");
+	for(int i =2; i<=size;i++) {//get 2,3...,size lengths of substrings
+		LinkedList<String> substringsOfCertainLength= bag.getSubstringsOfLength(i);
+		substringList.add(substringsOfCertainLength);
+		for(int j=0;j<substringsOfCertainLength.size();j++) {
+			System.out.print(substringsOfCertainLength.get(j)+"  ");
+			
 		}
-    	 System.out.println("\""+str+"\""+" can create:");
-    	
-    	 
-    	 //reorder so show from less to more letters
-    	 LinkedList<LinkedList<String>> sort =new LinkedList<LinkedList<String>>();
-    	 
-		 for(String s: permSet){
-			 while(sort.size()<str.length()+1) {
-				 sort.add(new LinkedList<String>());
-			 }
-			 sort.get(s.length()).add(s);
-	     }
-		 LinkedList<String> forDict=new LinkedList<String>();
-		
-		 
-		 for(int i=2;i<sort.size();i++){
-			 int changeLine=0;
-			 if(sort.get(i).size()>0) {
-				 System.out.println("----------------------- "+i+" letters --------------------------");
-			 }
-			 for(int j=0;j<sort.get(i).size();j++){
-				 forDict.add(sort.get(i).get(j));
-				 if((10-i)>0 && changeLine%(13-i)==0 && changeLine!=0 && j!=0) System.out.println();
-				 System.out.print(sort.get(i).get(j)+"  ");
-				 changeLine++;
-			 }
-			 if(sort.get(i).size()>0) System.out.println();
-	     }
-		 
-		 System.out.println();
-		 return forDict;
+		System.out.println();
+	}
+    
     }
+   
     public void matchSubsetWithBlank(String s, Set permSet) {
     	//System.out.println("yes and :"+s.indexOf("-"));
     	LinkedList<String> possibilities = new LinkedList<String>();
@@ -402,7 +432,7 @@ class MyHashTable<K, V>
     		}
     	}
     	
-		HashNode<K,V> head;
+		HashNode head;
     		for(String p: possibilities) {
 			//	System.out.println("_"+p);
 		    	head = bucketArray[getBucketIndex(p)];
@@ -417,41 +447,12 @@ class MyHashTable<K, V>
     public boolean isPrime(int n) {
     	return true;
     }
-    //if s2 is a permutation of s1
-//    public boolean isSubset(String s1,String s2) {//ppp
-//    	int size1=s1.length();
-//    	int size2=s2.length();
-//    	
-//    	//if more letters, return false
-//    	if(size2>size1) return false;
-//    	
-//    	String s1Norm=normalize(s1);
-//    	String s2Norm=normalize(s2);
-//    	
-//    	//if same amount of letters, check normalize
-//    	if(size2==size1) return s1Norm.equals(s2Norm);
-//    	
-//    	//if s2 has less letters, check using contains
-//    	for(int i=0;i<s2.length();i++) {//watch out for how many char eg. keynote nono or none
-//    		if(s1Norm.contains(s2Norm.substring(i,i+1))) {
-//    			int index = s1Norm.indexOf(s2Norm.substring(i,i+1));
-//    			if(index==0)
-//    				s1Norm = s1Norm.substring(1);
-//    			else if(index>0 && index<s1Norm.length()-1)
-//    				s1Norm = s1Norm.substring(0,index)+s1Norm.substring(index+1);
-//    			else if(index==s1Norm.length()-1)
-//    				s1Norm = s1Norm.substring(0,index);
-//    			
-//    		}else return false;
-//    	}
-//    	
-//    	return true;
-//    }
+  
     public LinkedList<String> getWordsFromSameBucket(String s) {
     
     	LinkedList<String> list = new LinkedList<String>();
     	
-    	HashNode<K,V> head = bucketArray[getBucketIndex(s)];
+    	HashNode head = bucketArray[getBucketIndex(s)];
     	while(head!=null) {
     		System.out.print(head.value+"  ");
     		head=head.next;
@@ -476,10 +477,10 @@ class MyHashTable<K, V>
 			FileReader fr=new FileReader(file);   //reads the file  
 			BufferedReader br=new BufferedReader(fr);  //creates a buffering character input stream  
 			for(String line="";(line=br.readLine())!=null;){  
-				line =  line.replaceAll("\\s","");
-				String line_norm = normalize(line);
-				int k = hashKey(normalize(line_norm));
-				add(k,line);	
+//				line =  line.replaceAll("\\s","");
+//				String line_norm = normalize(line);
+//				int k = hashKey(normalize(line_norm));
+				add(line);
 			//	System.out.println(line+": "+line_norm+": "+k);  //strip of space!!
 			
 			}  
@@ -499,16 +500,95 @@ class MyHashTable<K, V>
         points.put("g",2);points.put("d",2);
         points.put("l",1); points.put("s",1); points.put("u",1); points.put("n",1); points.put("r",1); points.put("t",1); points.put("o",1); points.put("a",1); points.put("i",1); points.put("e",1); 
     }
-    public static void main(String[] args) {//30637 , 39989,25163
-    	 MyHashTable<Integer, String> map = new MyHashTable<>(57787,"src/lab11_scrabble/wordsList_collins2019.txt"); 
-//	       map.findSubset("contrabnd-");
-    	 map.findSubset("bk-");
-	      System.out.println( map.get("symphony"));
-	      System.out.println( map.get("messiah"));
-	      System.out.println( map.get("counterfeit"));
-	      System.out.println( map.get("contraband"));
-    
-    }public int hashKey(String keyStr) {
+//    public static void main(String[] args) {//30637 , 39989,25163
+//    	 MyHashTable map = new MyHashTable(57787,"src/lab11_scrabble/wordsList_collins2019_def.txt"); 
+////	       map.findSubset("contrabnd-");
+//    	//map.findSubset("abac");
+////	      System.out.println( map.get("symphony"));
+////	      System.out.println( map.get("messiah"));
+////	      System.out.println( map.get("counterfeit"));
+////	      System.out.println( map.get("contraband"));
+////	      map.findSubstringsWithBag("abac");
+//	      map.getValidWordsFromSubstrings("parsley");
+//	      map.getValidWordsFromSubstrings("married");
+//	      while(true) {
+//	    	  System.out.print("Start cheating: ");
+//        	  Scanner in = new Scanner(System.in);
+//              String s = in.nextLine();
+//              map.getValidWordsFromSubstrings(s);
+//              map.lookUpWords();
+//	      }
+//    }
+    public void lookUpWords() {
+    	System.out.println("- You Entered dictionary -");
+    	 System.out.print("Get definition: ");
+   	  Scanner in = new Scanner(System.in);
+         String s = in.nextLine();
+    	while(!s.equals("q")) {
+        	  
+              String def = this.getDef(s);
+              for(int i=0;i<def.length();i++) {
+            	  if((int)def.charAt(i)==9) {
+            		  if(i+1<def.length())
+            			  def=def.substring(i+1);
+            		  break;
+            	  }
+              }
+              System.out.println("Def: "+def);
+              System.out.println("- Type \"q\" to leave dictionary -");
+              System.out.print("Get definition: ");
+               s = in.nextLine();  
+    	}
+    }
+    public void getValidWordsFromSubstrings(String str) {
+    	findSubstringsWithBag(str);//substringList
+    	if(!substringList.isEmpty()) {
+    		System.out.println("------- "+str+" can spell "+" -------");
+			
+    		for(LinkedList<String> ithLengthSubstring:substringList) {
+    			if(!ithLengthSubstring.isEmpty()) {
+    				boolean dividerPrinted=false;
+    				int items=0;
+    				for(String s : ithLengthSubstring) {
+    					LinkedList<String> perm;
+//    					if(s.contains("-")) {
+//    						LinkedList<String> blankstrings=new LinkedList<String>();
+//    						for(int i=0;i<26;i++) {
+//    							String temp=s.replaceFirst("-", ""+(char)('a'+i));
+//    							if(temp.contains("-")) {
+//    								for(int t=0;t<26;t++) {
+//    	    							temp=temp.replaceFirst("-", ""+(char)('a'+t));
+//    								}
+//    							}
+//    							blankstrings.add(temp);
+//    						}
+//    						perm=findPermutation(s);
+//    					}else {
+    						perm=findPermutation(s);
+//    					}
+    					if(!perm.isEmpty()) {
+    						if(!dividerPrinted) {
+    							System.out.println("------- "+s.length()+" letters -------");
+    							dividerPrinted=true;
+    						}
+    						for(String s_p: perm) {
+    							if(items!=0 && items%7==0)
+    								System.out.println();
+    							System.out.print(s_p+"  ");
+    							items++;
+    						}
+    						
+    					}
+    				}
+    				System.out.println();
+    			}
+    		}
+    	}
+    }
+    public boolean isPermutation(String s1, String s2) {
+		return normalize(s1).equals(normalize(s2));
+    }
+    public int hashKey(String keyStr) {
     	long key=0;
     	//57787
     	//94447: 16
