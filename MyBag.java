@@ -16,6 +16,7 @@ public interface MyBag {
 			public LinkedList<String> getSubstringsOfLength(int k);
 			//normally from n diff elements pick k is n!/(k!*(n-k)!)
 			//but since we may use same elements 
-			public int getHowManyCombiThereIs(int n, int k);
-			public int factorial(int n) ;
+			public int getHowManyCombiThereIs(int k);
+			public int fac(int n) ;
+			public void charCount();
 }
