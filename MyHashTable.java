@@ -373,6 +373,7 @@ class MyHashTable
     		}
 	    	
     	}else { substring.add(s);}
+    	
     	for(int i=0;i<substring.size();i++) {
     	HashNode head = bucketArray[getBucketIndex(substring.get(i))];
     	while(head!=null) {
@@ -543,29 +544,14 @@ class MyHashTable
     public void getValidWordsFromSubstrings(String str) {
     	findSubstringsWithBag(str);//substringList
     	if(!substringList.isEmpty()) {
-    		System.out.println("------- "+str+" can spell "+" -------");
-			
+    		System.out.println("********* "+str+" can spell "+" *********");
     		for(LinkedList<String> ithLengthSubstring:substringList) {
     			if(!ithLengthSubstring.isEmpty()) {
     				boolean dividerPrinted=false;
     				int items=0;
     				for(String s : ithLengthSubstring) {
     					LinkedList<String> perm;
-//    					if(s.contains("-")) {
-//    						LinkedList<String> blankstrings=new LinkedList<String>();
-//    						for(int i=0;i<26;i++) {
-//    							String temp=s.replaceFirst("-", ""+(char)('a'+i));
-//    							if(temp.contains("-")) {
-//    								for(int t=0;t<26;t++) {
-//    	    							temp=temp.replaceFirst("-", ""+(char)('a'+t));
-//    								}
-//    							}
-//    							blankstrings.add(temp);
-//    						}
-//    						perm=findPermutation(s);
-//    					}else {
     						perm=findPermutation(s);
-//    					}
     					if(!perm.isEmpty()) {
     						if(!dividerPrinted) {
     							System.out.println("------- "+s.length()+" letters -------");
@@ -577,7 +563,6 @@ class MyHashTable
     							System.out.print(s_p+"  ");
     							items++;
     						}
-    						
     					}
     				}
     				System.out.println();

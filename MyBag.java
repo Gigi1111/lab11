@@ -5,8 +5,8 @@ import java.util.LinkedList;
 public interface MyBag {
 			
 		    public String normalize(String s);
-			public String add(String c);
-			public String remove(String s);
+			public boolean add(String c);
+			public boolean remove(String s);
 			public String grab();
 			public boolean contains(String s);
 			public boolean isEmpty();
